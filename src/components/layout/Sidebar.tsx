@@ -26,7 +26,7 @@ const navigationItems = [
   { icon: AlertTriangle, label: "Bug Reports", path: "/bug-reports" },
   { icon: Bug, label: "Bug Bashes", path: "/bug-bashes" },
   { icon: FolderTree, label: "Test Suites", path: "/test-suites" },
-  { icon: FileSpreadsheet, label: "QA Report Template", path: "/qa-report-template" },
+  { icon: FileSpreadsheet, label: "QA Report", path: "/qa-report" }, // Update to point to the new QA Report page
   { icon: BarChart3, label: "Reports & Analytics", path: "/reports" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

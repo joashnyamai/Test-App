@@ -8,6 +8,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
+import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { Signup } from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
@@ -61,8 +62,16 @@ const App = () => (
               </PrivateRoute>
             }
           />
-          {/* Add other protected routes similarly */}
-
+          <Route
+            path="/qa-report" // Add the new route for QA Report
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <QaReport />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
