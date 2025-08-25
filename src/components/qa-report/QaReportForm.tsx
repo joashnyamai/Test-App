@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useQaReportStore } from "@/store/qa-report-store";
-import type { QaReport, BugDetail } from "@/types/qa-report";
+import type { QaReport, BugDetail, TestCaseExecution } from "@/types/qa-report";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -187,6 +187,52 @@ const QaReportForm = ({ open, onOpenChange, reportId, onSuccess }: QaReportFormP
     });
   };
 
+  const calculateRates = (testCaseData: TestCaseExecution): TestCaseExecution => {
+    const {
+      totalTestCases,
+      testCasesExecuted,
+      passedTestCases,
+      failedTestCases
+    } = testCaseData;
+
+    // Calculate execution rate: (executed / total) * 100
+    const executionRate = totalTestCases > 0 
+      ? Math.round((testCasesExecuted / totalTestCases) * 100) 
+      : 0;
+
+    // Calculate pass rate: (passed / executed) * 100
+    const passRate = testCasesExecuted > 0 
+      ? Math.round((passedTestCases / testCasesExecuted) * 100) 
+      : 0;
+
+    // Calculate fail rate: (failed / executed) * 100
+    const failRate = testCasesExecuted > 0 
+      ? Math.round((failedTestCases / testCasesExecuted) * 100) 
+      : 0;
+
+    return {
+      ...testCaseData,
+      executionRate,
+      passRate,
+      failRate
+    };
+  };
+
+  const handleTestCaseChange = (key: keyof TestCaseExecution, value: number) => {
+    const updatedTestCaseExecution = {
+      ...formData.testCaseExecution,
+      [key]: value
+    };
+
+    // Calculate rates automatically
+    const calculatedRates = calculateRates(updatedTestCaseExecution);
+
+    setFormData({
+      ...formData,
+      testCaseExecution: calculatedRates
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -333,22 +379,33 @@ const QaReportForm = ({ open, onOpenChange, reportId, onSuccess }: QaReportFormP
           <div className="space-y-4">
             <h3 className="font-semibold">Test Case Execution</h3>
             
-            {Object.entries(formData.testCaseExecution).map(([key, value]) => (
-              <div key={key}>
-                <Label>{key.split(/(?=[A-Z])/).join(' ')}</Label>
-                <Input
-                  type="number"
-                  value={value}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    testCaseExecution: {
-                      ...formData.testCaseExecution,
-                      [key]: parseInt(e.target.value) || 0
-                    }
-                  })}
-                />
-              </div>
-            ))}
+            {Object.entries(formData.testCaseExecution).map(([key, value]) => {
+              // For rate fields, make them read-only and display calculated values
+              const isRateField = ['executionRate', 'passRate', 'failRate'].includes(key);
+              
+              return (
+                <div key={key}>
+                  <Label>{key.split(/(?=[A-Z])/).join(' ')}</Label>
+                  {isRateField ? (
+                    <Input
+                      type="number"
+                      value={value}
+                      readOnly
+                      className="bg-muted"
+                    />
+                  ) : (
+                    <Input
+                      type="number"
+                      value={value}
+                      onChange={(e) => handleTestCaseChange(
+                        key as keyof TestCaseExecution, 
+                        parseInt(e.target.value) || 0
+                      )}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Defect Status */}
