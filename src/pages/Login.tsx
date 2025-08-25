@@ -38,7 +38,7 @@ export const Login = () => {
     
     const success = login(form.email, form.password);
     if (success) {
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     } else {
       setError("Invalid email or password");
     }
