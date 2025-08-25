@@ -8,7 +8,9 @@ import {
   BarChart3,
   Settings,
   FolderTree,   // Test Suites
-  FileSpreadsheet // QA Report Template
+  FileSpreadsheet, // QA Report Template
+  User,          // Profile
+  Bell           // Notifications
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -19,15 +21,20 @@ interface SidebarProps {
 
 const navigationItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: FileText, label: "Projects", path: "/projects" }, // Link to the new Projects page
+  { icon: FileText, label: "Projects", path: "/projects" },
   { icon: Calendar, label: "Test Plan", path: "/test-plans" },
   { icon: GitBranch, label: "RTM (Requirements Traceability Matrix)", path: "/rtm" },
   { icon: FileText, label: "Test Cases", path: "/test-cases" },
   { icon: AlertTriangle, label: "Bug Reports", path: "/bug-reports" },
   { icon: Bug, label: "Bug Bashes", path: "/bug-bashes" },
   { icon: FolderTree, label: "Test Suites", path: "/test-suites" },
-  { icon: FileSpreadsheet, label: "QA Report", path: "/qa-report" }, // Update to point to the new QA Report page
+  { icon: FileSpreadsheet, label: "QA Report", path: "/qa-report" },
   { icon: BarChart3, label: "Reports & Analytics", path: "/reports" },
+
+  // New items
+  { icon: Bell, label: "Notifications", path: "/notifications" },
+  { icon: User, label: "Profile", path: "/profile" },
+
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 

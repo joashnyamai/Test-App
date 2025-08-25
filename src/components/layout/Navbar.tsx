@@ -1,4 +1,4 @@
-import { Search, Bell, User, Menu, Sun, Moon, X } from "lucide-react";
+import { Search, Bell, User, Menu, Sun, Moon, X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -78,20 +78,44 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
 
         {/* Right side - Actions */}
         <div className="flex items-center space-x-2 lg:space-x-3">
-          {/* Dark mode toggle - hidden on mobile to save space */}
+          {/* Dark mode toggle */}
           <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)} className="hidden sm:flex h-9 w-9">
             {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>
 
-          {/* Notifications */}
-          <div className="relative">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <Bell className="w-4 h-4" />
-            </Button>
-            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
-              3
-            </span>
-          </div>
+          {/* Notifications dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="relative">
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Bell className="w-4 h-4" />
+                </Button>
+                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                  3
+                </span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64" align="end">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate("/notifications/1")}>
+                ✅ Test plan approved
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/notifications/2")}>
+                🐞 Bug #124 assigned
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/notifications/3")}>
+                📊 New report available
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => alert("All marked as read!")}>
+                Mark all as read
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/notifications")}>
+                View all
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* User dropdown */}
           <DropdownMenu>
@@ -111,11 +135,12 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/settings")}>
+                <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

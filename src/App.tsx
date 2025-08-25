@@ -9,11 +9,12 @@ import LandingPage from "./pages/LandingPage";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
-import Projects from "./pages/Projects"; // Import the Projects component
-import RtmPage from "./pages/RtmPage"; // Import the RTM page
-import QaReport from "./pages/QaReport"; // Import the QaReport component
+import Projects from "./pages/Projects";
+import RtmPage from "./pages/RtmPage";
+import QaReport from "./pages/QaReport";
 import { Signup } from "./pages/Signup";
 import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications"; // ✅ Import Notifications
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
         <Routes>
           {/* Landing Page as default */}
           <Route path="/" element={<LandingPage />} />
+
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -89,11 +91,21 @@ const App = () => (
             }
           />
           <Route
-            path="/profile" // Add the new route for Profile
+            path="/profile"
             element={
               <PrivateRoute>
                 <DashboardLayout>
                   <Profile />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/notifications" // ✅ Add Notifications route
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Notifications />
                 </DashboardLayout>
               </PrivateRoute>
             }
@@ -108,6 +120,7 @@ const App = () => (
               </PrivateRoute>
             }
           />
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
