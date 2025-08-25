@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Menu, Search, ArrowRight, CheckCircle, Users, BarChart3, Palette, Code, Monitor, X } from "lucide-react";
 
 const navItems = [
-  { name: "Products", dropdown: ["Test Management", "Bug Tracking", "Reporting"] },
-  { name: "Solutions", dropdown: ["Automation", "Manual Testing", "Performance"] },
+  { name: "Products", path: "/products", dropdown: ["Test Management", "Bug Tracking", "Reporting"] },
+  { name: "Solutions", path: "/solutions", dropdown: ["Automation", "Manual Testing", "Performance"] },
   {
     name: "Why Us",
+    path: "/why-us",
     megaDropdown: [
       { title: "System of Work", desc: "Blueprint for how teams work together" },
       { title: "Marketplace", desc: "Connect thousands of apps to your products" },
@@ -17,8 +18,8 @@ const navItems = [
       { title: "Trust center", desc: "Ensure your data's security, compliance & availability" },
     ]
   },
-  { name: "Resources", dropdown: ["Docs", "Blog", "Webinars"] },
-  { name: "Enterprise", dropdown: ["Custom Solutions", "Integrations", "Support"] },
+  { name: "Resources", path: "/resources", dropdown: ["Docs", "Blog", "Webinars"] },
+  { name: "Enterprise", path: "/enterprise", dropdown: ["Custom Solutions", "Integrations", "Support"] },
 ];
 
 const categories = [
@@ -99,12 +100,12 @@ export default function LandingHeader({ user }) {
               <div className="hidden lg:flex items-center gap-2 flex-1 justify-center">
                 {navItems.map(item => (
                   <div key={item.name} className="relative group mx-2">
-                    <button className="text-black font-medium px-3 py-2 hover:text-blue-300">{item.name}</button>
+                    <button className="text-black font-medium px-3 py-2 hover:text-blue-300" onClick={() => item.path && navigate(item.path)}>{item.name}</button>
                     {/* Mega dropdown for 'Why Us' */}
                     {item.megaDropdown ? (
                       <div className="absolute left-1/2 -translate-x-1/2 top-full bg-white text-black rounded-2xl shadow-xl mt-4 p-8 min-w-[700px] flex flex-wrap gap-8 hidden group-hover:flex z-20">
                         {item.megaDropdown.map((opt, idx) => (
-                          <div key={opt.title} className="w-1/3 mb-4">
+                          <div key={opt.title} className="w-1/3 mb-4 cursor-pointer" onClick={() => navigate(`${item.path}#${opt.title.toLowerCase().replace(/\s/g, '-')}`)}>
                             <div className="font-bold text-lg mb-1 flex items-center gap-2">
                               {opt.title}
                               {opt.title === "System of Work" && (
@@ -118,7 +119,7 @@ export default function LandingHeader({ user }) {
                     ) : (
                       <div className="absolute left-0 top-full bg-white text-black rounded shadow-lg mt-2 min-w-[160px] hidden group-hover:block z-10">
                         {item.dropdown.map(opt => (
-                          <div key={opt} className="px-4 py-2 hover:bg-blue-50 cursor-pointer">{opt}</div>
+                          <div key={opt} className="px-4 py-2 hover:bg-blue-50 cursor-pointer" onClick={() => navigate(`${item.path}#${opt.toLowerCase().replace(/\s/g, '-')}`)}>{opt}</div>
                         ))}
                       </div>
                     )}
@@ -157,7 +158,7 @@ export default function LandingHeader({ user }) {
                     <div key={item.name} className="mb-4">
                       <button
                         className="w-full text-left text-black font-medium px-3 py-3 hover:bg-blue-50 rounded-lg flex items-center justify-between"
-                        onClick={() => toggleDropdown(item.name)}
+                        onClick={() => { item.path && navigate(item.path); toggleDropdown(item.name) }}
                       >
                         <span>{item.name}</span>
                         <span className="transform transition-transform">
@@ -168,12 +169,12 @@ export default function LandingHeader({ user }) {
                       {activeDropdown === item.name && (
                         <div className="pl-6 mt-2 space-y-2">
                           {item.dropdown?.map(opt => (
-                            <a key={opt} href="#" className="block text-gray-600 hover:text-blue-600 py-2">
+                            <a key={opt} href={`${item.path}#${opt.toLowerCase().replace(/\s/g, '-')}`} className="block text-gray-600 hover:text-blue-600 py-2">
                               {opt}
                             </a>
                           ))}
                           {item.megaDropdown?.map(opt => (
-                            <a key={opt.title} href="#" className="block text-gray-600 hover:text-blue-600 py-2">
+                            <a key={opt.title} href={`${item.path}#${opt.title.toLowerCase().replace(/\s/g, '-')}`} className="block text-gray-600 hover:text-blue-600 py-2">
                               {opt.title}
                             </a>
                           ))}
