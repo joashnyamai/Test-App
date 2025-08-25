@@ -1,4 +1,4 @@
-import { Search, Bell, User, Menu, Sun, Moon } from "lucide-react";
+import { Search, Bell, User, Menu, Sun, Moon, CheckCircle, XCircle, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -48,14 +48,71 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
           {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </Button>
 
-        <div className="relative">
-          <Button variant="ghost" size="icon" className="h-9 w-9">
-            <Bell className="w-4 h-4" />
-          </Button>
-          <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
-            3
-          </span>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="relative">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Bell className="w-4 h-4" />
+              </Button>
+              <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                3
+              </span>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-80" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal flex items-center justify-between">
+              <span className="text-sm font-medium">Notifications</span>
+              <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground">
+                Mark all as read
+              </Button>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="max-h-60 overflow-y-auto">
+              <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer hover:bg-muted/50">
+                <div className="flex items-start space-x-3">
+                  <div className="bg-blue-100 dark:bg-blue-900/40 p-2 rounded-full">
+                    <CheckCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Test Plan Completed</p>
+                    <p className="text-xs text-muted-foreground">Authentication test plan has been completed successfully</p>
+                    <p className="text-xs text-muted-foreground mt-1">2 minutes ago</p>
+                  </div>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer hover:bg-muted/50">
+                <div className="flex items-start space-x-3">
+                  <div className="bg-red-100 dark:bg-red-900/40 p-2 rounded-full">
+                    <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Critical Bug Reported</p>
+                    <p className="text-xs text-muted-foreground">New critical bug found in login functionality</p>
+                    <p className="text-xs text-muted-foreground mt-1">15 minutes ago</p>
+                  </div>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem className="flex flex-col items-start p-3 cursor-pointer hover:bg-muted/50">
+                <div className="flex items-start space-x-3">
+                  <div className="bg-green-100 dark:bg-green-900/40 p-2 rounded-full">
+                    <Users className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Team Update</p>
+                    <p className="text-xs text-muted-foreground">New team member joined the QA team</p>
+                    <p className="text-xs text-muted-foreground mt-1">1 hour ago</p>
+                  </div>
+                </div>
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="justify-center text-sm text-muted-foreground cursor-pointer">
+              View all notifications
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

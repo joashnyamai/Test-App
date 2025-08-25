@@ -30,9 +30,11 @@ const projectData = {
       failed: "98",
       bugs: "24",
     },
-    passFailData: [
-      { name: "Passed", value: 1089 },
-      { name: "Failed", value: 98 }
+    testCaseStatusData: [
+      { name: "Passed", value: 1089, color: "#16a34a" },
+      { name: "Failed", value: 98, color: "#ef4444" },
+      { name: "Skipped", value: 35, color: "#f59e0b" },
+      { name: "Blocked", value: 25, color: "#3b82f6" }
     ],
     bugSeverityData: [
       { name: "Critical", value: 3 },
@@ -63,9 +65,11 @@ const projectData = {
       failed: "165",
       bugs: "31",
     },
-    passFailData: [
-      { name: "Passed", value: 820 },
-      { name: "Failed", value: 165 }
+    testCaseStatusData: [
+      { name: "Passed", value: 820, color: "#16a34a" },
+      { name: "Failed", value: 165, color: "#ef4444" },
+      { name: "Skipped", value: 45, color: "#f59e0b" },
+      { name: "Blocked", value: 35, color: "#3b82f6" }
     ],
     bugSeverityData: [
       { name: "Critical", value: 5 },
@@ -232,14 +236,14 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         {/* Charts (2 columns inside) */}
         <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Pass vs Fail */}
+          {/* Test Case Status */}
           <Card>
-            <CardHeader><CardTitle>Pass vs Fail</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Test Case Status</CardTitle></CardHeader>
             <CardContent>
               <PieChart width={250} height={200}>
-                <Pie data={project.passFailData} dataKey="value" outerRadius={80} label>
-                  {project.passFailData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                <Pie data={project.testCaseStatusData} dataKey="value" outerRadius={80} label>
+                  {project.testCaseStatusData.map((entry, index) => (
+                    <Cell key={index} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip contentStyle={tooltipStyle} />
@@ -252,13 +256,22 @@ export const Dashboard = () => {
             <CardHeader><CardTitle>Bug Severity Distribution</CardTitle></CardHeader>
             <CardContent>
               <PieChart width={250} height={200}>
-                <Pie data={project.bugSeverityData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} innerRadius={30} label>
+                <Pie 
+                  data={project.bugSeverityData} 
+                  dataKey="value" 
+                  nameKey="name" 
+                  cx="50%" 
+                  cy="50%" 
+                  outerRadius={60} 
+                  innerRadius={30}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
                   {project.bugSeverityData.map((entry, index) => (
                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ color: axisStroke }} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(value, name) => [`${value} bugs`, name]} />
+                <Legend wrapperStyle={{ color: axisStroke, fontSize: '12px' }} />
               </PieChart>
             </CardContent>
           </Card>
@@ -268,13 +281,49 @@ export const Dashboard = () => {
             <CardHeader><CardTitle>Test Execution Trend</CardTitle></CardHeader>
             <CardContent>
               <LineChart width={250} height={200} data={project.executionTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-                <XAxis dataKey="date" stroke={axisStroke} tick={{ fill: axisStroke }} />
-                <YAxis stroke={axisStroke} tick={{ fill: axisStroke }} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ color: axisStroke }} />
-                <Line type="monotone" dataKey="passed" stroke={linePassed} />
-                <Line type="monotone" dataKey="failed" stroke={lineFailed} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} opacity={0.5} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke={axisStroke} 
+                  tick={{ fill: axisStroke, fontSize: 12 }}
+                  tickMargin={8}
+                />
+                <YAxis 
+                  stroke={axisStroke} 
+                  tick={{ fill: axisStroke, fontSize: 12 }}
+                  tickMargin={8}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    ...tooltipStyle,
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }} 
+                  formatter={(value, name) => [`${value} tests`, name === 'passed' ? 'Passed' : 'Failed']}
+                />
+                <Legend 
+                  wrapperStyle={{ 
+                    color: axisStroke, 
+                    fontSize: '12px',
+                    paddingTop: '10px'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="passed" 
+                  stroke={linePassed} 
+                  strokeWidth={2}
+                  dot={{ fill: linePassed, strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: linePassed, strokeWidth: 2 }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="failed" 
+                  stroke={lineFailed} 
+                  strokeWidth={2}
+                  dot={{ fill: lineFailed, strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: lineFailed, strokeWidth: 2 }}
+                />
               </LineChart>
             </CardContent>
           </Card>
@@ -284,12 +333,41 @@ export const Dashboard = () => {
             <CardHeader><CardTitle>Test Plan Progress</CardTitle></CardHeader>
             <CardContent>
               <BarChart width={250} height={200} data={project.planProgressData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-                <XAxis dataKey="plan" stroke={axisStroke} tick={{ fill: axisStroke }} />
-                <YAxis stroke={axisStroke} tick={{ fill: axisStroke }} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Legend wrapperStyle={{ color: axisStroke }} />
-                <Bar dataKey="progress" fill={barColor} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} opacity={0.5} />
+                <XAxis 
+                  dataKey="plan" 
+                  stroke={axisStroke} 
+                  tick={{ fill: axisStroke, fontSize: 12 }}
+                  tickMargin={8}
+                />
+                <YAxis 
+                  stroke={axisStroke} 
+                  tick={{ fill: axisStroke, fontSize: 12 }}
+                  tickMargin={8}
+                  domain={[0, 100]}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    ...tooltipStyle,
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }} 
+                  formatter={(value) => [`${value}% complete`, 'Progress']}
+                />
+                <Legend wrapperStyle={{ color: axisStroke, fontSize: '12px' }} />
+                <Bar 
+                  dataKey="progress" 
+                  fill={barColor}
+                  radius={[4, 4, 0, 0]}
+                >
+                  {project.planProgressData.map((entry, index) => (
+                    <Cell 
+                      key={index} 
+                      fill={barColor}
+                      opacity={0.8 + (index * 0.1)}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </CardContent>
           </Card>
