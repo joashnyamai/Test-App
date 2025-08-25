@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +24,7 @@ export const Signup = () => {
     email: "", 
     password: "", 
     confirmPassword: "",
+    role: "QA Tester", // Default role
     agreeToTerms: false
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -27,6 +35,7 @@ export const Signup = () => {
     email: "", 
     password: "", 
     confirmPassword: "",
+    role: "",
     agreeToTerms: ""
   });
   const [darkMode, setDarkMode] = useState(false);
@@ -49,6 +58,7 @@ export const Signup = () => {
       email: "", 
       password: "", 
       confirmPassword: "",
+      role: "",
       agreeToTerms: ""
     };
 
@@ -105,13 +115,14 @@ export const Signup = () => {
       return;
     }
     
-    // Add user to store
+    // Add user to store with role
     addUser({
       firstName: form.firstName,
       lastName: form.lastName,
       username: form.username,
       email: form.email,
       password: form.password,
+      role: form.role, // Include role
     });
     
     navigate("/login", { replace: true });
@@ -188,6 +199,23 @@ export const Signup = () => {
             {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
           </div>
 
+          <div>
+            <Label>Role</Label>
+            <Select 
+              value={form.role} 
+              onValueChange={(value) => setForm({ ...form, role: value })} 
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="QA Tester">QA Tester</SelectItem>
+                <SelectItem value="Developer">Developer</SelectItem>
+                <SelectItem value="Project Manager">Project Manager</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+          </div>
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"

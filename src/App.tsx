@@ -9,8 +9,10 @@ import LandingPage from "./pages/LandingPage";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
+import Projects from "./pages/Projects"; // Import the Projects component
 import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { Signup } from "./pages/Signup";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +48,16 @@ const App = () => (
             }
           />
           <Route
+            path="/projects"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Projects />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/test-cases"
             element={
               <PrivateRoute>
@@ -71,6 +83,16 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <QaReport />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile" // Add the new route for Profile
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Profile />
                 </DashboardLayout>
               </PrivateRoute>
             }
