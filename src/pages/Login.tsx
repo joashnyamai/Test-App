@@ -5,12 +5,15 @@ import { Label } from "@/components/ui/label";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/store/user-store";
 
 export const Login = () => {
   const navigate = useNavigate();
+  const { login } = useUserStore();
   const [form, setForm] = useState({ email: "", password: "" });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [error, setError] = useState("");
 
   // Apply theme based on darkMode state
   useEffect(() => {
@@ -21,13 +24,25 @@ export const Login = () => {
     }
   }, [darkMode]);
 
-  const handleLogin = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError("");
+    
     if (!form.email || !form.password) {
-      alert("Email and Password are required");
+      setError("Email and Password are required");
+      setLoading(false);
       return;
     }
-    localStorage.setItem("token", "dummy-token");
-    navigate("/", { replace: true });
+    
+    const success = login(form.email, form.password);
+    if (success) {
+      navigate("/", { replace: true });
+    } else {
+      setError("Invalid email or password");
+    }
+    setLoading(false);
   };
 
   return (
@@ -61,8 +76,10 @@ export const Login = () => {
             </button>
           </div>
 
-          <Button onClick={handleLogin} className="w-full">
-            Login
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <Button onClick={handleLogin} className="w-full" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </Button>
 
           <div className="flex justify-center gap-3 mt-4">

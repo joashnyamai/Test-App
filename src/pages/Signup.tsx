@@ -5,13 +5,32 @@ import { Label } from "@/components/ui/label";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/store/user-store";
 
 export const Signup = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "", confirmPassword: "" });
+  const { addUser, getUserByEmail } = useUserStore();
+  const [form, setForm] = useState({ 
+    firstName: "", 
+    lastName: "", 
+    username: "", 
+    email: "", 
+    password: "", 
+    confirmPassword: "",
+    agreeToTerms: false
+  });
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({ email: "", password: "", confirmPassword: "" });
+  const [errors, setErrors] = useState({ 
+    firstName: "", 
+    lastName: "", 
+    username: "", 
+    email: "", 
+    password: "", 
+    confirmPassword: "",
+    agreeToTerms: ""
+  });
   const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -23,7 +42,35 @@ export const Signup = () => {
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = { email: "", password: "", confirmPassword: "" };
+    const newErrors = { 
+      firstName: "", 
+      lastName: "", 
+      username: "", 
+      email: "", 
+      password: "", 
+      confirmPassword: "",
+      agreeToTerms: ""
+    };
+
+    if (!form.firstName.trim()) {
+      newErrors.firstName = "First name is required"; valid = false;
+    }
+
+    if (!form.lastName.trim()) {
+      newErrors.lastName = "Last name is required"; valid = false;
+    }
+
+    if (!form.username.trim()) {
+      newErrors.username = "Username is required"; valid = false;
+    } else if (form.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters"; valid = false;
+    }
+
+    // Check if email already exists
+    const existingUser = getUserByEmail(form.email);
+    if (existingUser) {
+      newErrors.email = "Email already registered"; valid = false;
+    }
 
     if (!form.email) {
       newErrors.email = "Email is required"; valid = false;
@@ -33,21 +80,42 @@ export const Signup = () => {
 
     if (!form.password) {
       newErrors.password = "Password is required"; valid = false;
-    } else if (form.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"; valid = false;
+    } else if (form.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters"; valid = false;
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(form.password)) {
+      newErrors.password = "Password must contain uppercase, lowercase, and number"; valid = false;
     }
 
     if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match"; valid = false;
     }
 
+    if (!form.agreeToTerms) {
+      newErrors.agreeToTerms = "You must agree to the terms and conditions"; valid = false;
+    }
+
     setErrors(newErrors);
     return valid;
   };
 
-  const handleSignup = () => {
-    if (!validateForm()) return;
+  const handleSignup = async () => {
+    setLoading(true);
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+    
+    // Add user to store
+    addUser({
+      firstName: form.firstName,
+      lastName: form.lastName,
+      username: form.username,
+      email: form.email,
+      password: form.password,
+    });
+    
     navigate("/login", { replace: true });
+    setLoading(false);
   };
 
   return (
@@ -56,6 +124,37 @@ export const Signup = () => {
         <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
 
         <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>First Name</Label>
+              <Input
+                type="text"
+                value={form.firstName}
+                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+              />
+              {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+            </div>
+            <div>
+              <Label>Last Name</Label>
+              <Input
+                type="text"
+                value={form.lastName}
+                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+              />
+              {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+            </div>
+          </div>
+
+          <div>
+            <Label>Username</Label>
+            <Input
+              type="text"
+              value={form.username}
+              onChange={(e) => setForm({ ...form, username: e.target.value })}
+            />
+            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+          </div>
+
           <div>
             <Label>Email</Label>
             <Input
@@ -89,7 +188,23 @@ export const Signup = () => {
             {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
           </div>
 
-          <Button onClick={handleSignup} className="w-full">Sign Up</Button>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={form.agreeToTerms}
+              onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
+              className="w-4 h-4"
+            />
+            <label htmlFor="terms" className="text-sm">
+              I agree to the <span className="text-blue-600 cursor-pointer">Terms and Conditions</span> and <span className="text-blue-600 cursor-pointer">Privacy Policy</span>
+            </label>
+          </div>
+          {errors.agreeToTerms && <p className="text-red-500 text-sm">{errors.agreeToTerms}</p>}
+
+          <Button onClick={handleSignup} className="w-full" disabled={loading}>
+            {loading ? "Creating account..." : "Sign Up"}
+          </Button>
 
           <div className="flex justify-center gap-3 mt-4">
             <Button variant="outline" size="icon"><FaGithub /></Button>
