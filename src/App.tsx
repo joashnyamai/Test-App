@@ -8,6 +8,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
+import Projects from "./pages/Projects"; // Import the Projects component
 import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { Signup } from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -38,6 +39,16 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <Dashboard />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Projects />
                 </DashboardLayout>
               </PrivateRoute>
             }
