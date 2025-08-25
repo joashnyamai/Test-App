@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { Dashboard } from "./pages/Dashboard";
+import LandingPage from "./pages/LandingPage";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
@@ -27,13 +28,15 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Landing Page as default */}
+          <Route path="/" element={<LandingPage />} />
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
           {/* Protected Routes */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <PrivateRoute>
                 <DashboardLayout>
@@ -63,7 +66,7 @@ const App = () => (
             }
           />
           <Route
-            path="/qa-report" // Add the new route for QA Report
+            path="/qa-report"
             element={
               <PrivateRoute>
                 <DashboardLayout>
