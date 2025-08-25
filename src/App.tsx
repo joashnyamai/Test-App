@@ -10,6 +10,7 @@ import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
 import Projects from "./pages/Projects"; // Import the Projects component
+import RtmPage from "./pages/RtmPage"; // Import the RTM page
 import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { Signup } from "./pages/Signup";
 import Profile from "./pages/Profile";
@@ -93,6 +94,16 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <Profile />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/rtm"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <RtmPage />
                 </DashboardLayout>
               </PrivateRoute>
             }
