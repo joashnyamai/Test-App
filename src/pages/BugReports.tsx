@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Plus, Eye, Edit, MessageSquare } from "lucide-react";
+import { Search, Plus, Eye, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -19,110 +19,121 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const bugReports = [
-  {
-    id: "BUG-001",
-    title: "Login button not responsive on mobile",
-    severity: "High",
-    status: "Open",
-    reporter: "John Doe",
-    assignedTo: "Dev Team A",
-    module: "Authentication",
-    reportedDate: "2024-01-15",
-    comments: 3
-  },
-  {
-    id: "BUG-002",
-    title: "Payment gateway timeout error",
-    severity: "Critical",
-    status: "In Progress",
-    reporter: "Jane Smith",
-    assignedTo: "Dev Team B",
-    module: "Payment",
-    reportedDate: "2024-01-14",
-    comments: 7
-  },
-  {
-    id: "BUG-003",
-    title: "Search results not loading",
-    severity: "Medium",
-    status: "Resolved",
-    reporter: "Mike Johnson",
-    assignedTo: "Dev Team A",
-    module: "Search",
-    reportedDate: "2024-01-13",
-    comments: 2
-  },
-  {
-    id: "BUG-004",
-    title: "Cart items disappearing after refresh",
-    severity: "High",
-    status: "Open",
-    reporter: "Sarah Wilson",
-    assignedTo: "Dev Team C",
-    module: "E-commerce",
-    reportedDate: "2024-01-12",
-    comments: 5
-  },
-  {
-    id: "BUG-005",
-    title: "UI alignment issues in dashboard",
-    severity: "Low",
-    status: "Closed",
-    reporter: "David Brown",
-    assignedTo: "UI Team",
-    module: "Dashboard",
-    reportedDate: "2024-01-11",
-    comments: 1
-  }
-];
+import { useBugReportStore } from "@/store/bug-report-store";
+import { BugReportForm } from "@/components/bug-report/BugReportForm";
+import { BugReportDetails } from "@/components/bug-report/BugReportDetails";
+import { BugReportExcelButtons } from "@/components/bug-report/BugReportExcelButtons";
+import { BugReport } from "@/types/bug-report";
 
 export const BugReports = () => {
+  const { bugReports, deleteBugReport } = useBugReportStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [severityFilter, setSeverityFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [formOpen, setFormOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [editingBug, setEditingBug] = useState<BugReport | undefined>();
+  const [viewingBug, setViewingBug] = useState<BugReport | undefined>();
 
   const getSeverityBadge = (severity: string) => {
     switch (severity.toLowerCase()) {
       case 'critical':
-        return <Badge className="status-failed">Critical</Badge>;
+        return <Badge className="bg-red-100 text-red-800 border-red-200">Critical</Badge>;
       case 'high':
-        return <Badge className="status-blocked">High</Badge>;
+        return <Badge className="bg-orange-100 text-orange-800 border-orange-200">High</Badge>;
       case 'medium':
-        return <Badge className="bg-primary/10 text-primary border-primary/20">Medium</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Medium</Badge>;
       case 'low':
-        return <Badge className="status-not-run">Low</Badge>;
+        return <Badge className="bg-green-100 text-green-800 border-green-200">Low</Badge>;
       default:
-        return <Badge className="status-not-run">{severity}</Badge>;
+        return <Badge>{severity}</Badge>;
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return <Badge className="status-failed">Open</Badge>;
-      case 'in progress':
-        return <Badge className="status-blocked">In Progress</Badge>;
-      case 'resolved':
-        return <Badge className="status-passed">Resolved</Badge>;
-      case 'closed':
-        return <Badge className="status-not-run">Closed</Badge>;
+  const getPriorityBadge = (priority: string) => {
+    switch (priority.toLowerCase()) {
+      case 'critical':
+        return <Badge className="bg-red-100 text-red-800 border-red-200">Critical</Badge>;
+      case 'high':
+        return <Badge className="bg-orange-100 text-orange-800 border-orange-200">High</Badge>;
+      case 'medium':
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Medium</Badge>;
+      case 'low':
+        return <Badge className="bg-green-100 text-green-800 border-green-200">Low</Badge>;
       default:
-        return <Badge className="status-not-run">{status}</Badge>;
+        return <Badge>{priority}</Badge>;
     }
+  };
+
+  const getStatusBadge = (dateResolved?: string) => {
+    if (dateResolved) {
+      return <Badge className="bg-green-100 text-green-800 border-green-200">Resolved</Badge>;
+    }
+    return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Open</Badge>;
   };
 
   const filteredBugs = bugReports.filter(bug => {
     const matchesSearch = bug.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          bug.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         bug.module.toLowerCase().includes(searchTerm.toLowerCase());
+                         bug.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         bug.reportedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         bug.assignedTo.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesSeverity = severityFilter === "all" || bug.severity.toLowerCase() === severityFilter;
-    const matchesStatus = statusFilter === "all" || bug.status.toLowerCase() === statusFilter;
+    const matchesPriority = priorityFilter === "all" || bug.priority.toLowerCase() === priorityFilter;
     
-    return matchesSearch && matchesSeverity && matchesStatus;
+    return matchesSearch && matchesSeverity && matchesPriority;
   });
+
+  const handleCreateBug = () => {
+    setEditingBug(undefined);
+    setFormOpen(true);
+  };
+
+  const handleEditBug = (bug: BugReport) => {
+    setEditingBug(bug);
+    setFormOpen(true);
+  };
+
+  const handleViewBug = (bug: BugReport) => {
+    setViewingBug(bug);
+    setDetailsOpen(true);
+  };
+
+  const handleDeleteBug = (id: string) => {
+    if (confirm("Are you sure you want to delete this bug report?")) {
+      deleteBugReport(id);
+    }
+  };
+
+  const handleFormSubmit = (data: {
+    title: string;
+    module: string;
+    shortDescription: string;
+    severity: 'Critical' | 'High' | 'Medium' | 'Low';
+    priority: 'Critical' | 'High' | 'Medium' | 'Low';
+    reportedBy: string;
+    dateReported: string;
+    stepsToReproduce: string;
+    expectedResults: string;
+    actualResults: string;
+    assignedTo: string;
+    environment: string;
+    comments: string;
+    remarks: string;
+    dateResolved?: string;
+  }) => {
+    if (editingBug) {
+      useBugReportStore.getState().updateBugReport(editingBug.id, data);
+    } else {
+      const newBug: BugReport = {
+        ...data,
+        id: `BUG-${Date.now()}`,
+      };
+      useBugReportStore.getState().addBugReport(newBug);
+    }
+    setFormOpen(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -132,7 +143,7 @@ export const BugReports = () => {
           <h1 className="text-3xl font-bold text-foreground">Bug Reports</h1>
           <p className="text-muted-foreground mt-1">Track and manage reported issues</p>
         </div>
-        <Button className="bg-gradient-primary hover:bg-primary-hover">
+        <Button className="bg-gradient-primary hover:bg-primary-hover" onClick={handleCreateBug}>
           <Plus className="w-4 h-4 mr-2" />
           Report Bug
         </Button>
@@ -146,7 +157,7 @@ export const BugReports = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="Search bugs..."
+                  placeholder="Search bugs by title, ID, module, reporter, or assignee..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -167,16 +178,16 @@ export const BugReports = () => {
               </SelectContent>
             </Select>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
               <SelectTrigger className="w-40">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="open">Open</SelectItem>
-                <SelectItem value="in progress">In Progress</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
+                <SelectItem value="all">All Priority</SelectItem>
+                <SelectItem value="critical">Critical</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -188,12 +199,7 @@ export const BugReports = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Bug Reports ({filteredBugs.length})</span>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm">
-                <Filter className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
+            <BugReportExcelButtons />
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -203,12 +209,14 @@ export const BugReports = () => {
                 <TableHead className="w-24">Bug ID</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead className="w-24">Severity</TableHead>
-                <TableHead className="w-32">Status</TableHead>
+                <TableHead className="w-24">Priority</TableHead>
+                <TableHead className="w-24">Status</TableHead>
                 <TableHead className="w-32">Reporter</TableHead>
                 <TableHead className="w-32">Assigned To</TableHead>
                 <TableHead className="w-32">Module</TableHead>
                 <TableHead className="w-28">Reported</TableHead>
-                <TableHead className="w-32">Actions</TableHead>
+                <TableHead className="w-28">Resolved</TableHead>
+                <TableHead className="w-40">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -217,26 +225,38 @@ export const BugReports = () => {
                   <TableCell className="font-medium text-primary">{bug.id}</TableCell>
                   <TableCell className="font-medium">{bug.title}</TableCell>
                   <TableCell>{getSeverityBadge(bug.severity)}</TableCell>
-                  <TableCell>{getStatusBadge(bug.status)}</TableCell>
-                  <TableCell className="text-muted-foreground">{bug.reporter}</TableCell>
+                  <TableCell>{getPriorityBadge(bug.priority)}</TableCell>
+                  <TableCell>{getStatusBadge(bug.dateResolved)}</TableCell>
+                  <TableCell className="text-muted-foreground">{bug.reportedBy}</TableCell>
                   <TableCell className="text-muted-foreground">{bug.assignedTo}</TableCell>
                   <TableCell className="text-muted-foreground">{bug.module}</TableCell>
-                  <TableCell className="text-muted-foreground">{bug.reportedDate}</TableCell>
+                  <TableCell className="text-muted-foreground">{bug.dateReported}</TableCell>
+                  <TableCell className="text-muted-foreground">{bug.dateResolved || '-'}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0"
+                        onClick={() => handleViewBug(bug)}
+                      >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0"
+                        onClick={() => handleEditBug(bug)}
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 relative">
-                        <MessageSquare className="w-4 h-4" />
-                        {bug.comments > 0 && (
-                          <Badge className="absolute -top-1 -right-1 text-xs px-1 py-0 min-w-0 h-4 bg-primary">
-                            {bug.comments}
-                          </Badge>
-                        )}
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 text-destructive"
+                        onClick={() => handleDeleteBug(bug.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -246,6 +266,21 @@ export const BugReports = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Form Dialog */}
+      <BugReportForm
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        bug={editingBug}
+        onSubmit={handleFormSubmit}
+      />
+
+      {/* Details Dialog */}
+      <BugReportDetails
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        bug={viewingBug!}
+      />
     </div>
   );
 };

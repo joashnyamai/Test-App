@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
+import { WhatsAppButton } from "../WhatsAppButton";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,8 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {children}
         </main>
       </div>
+      
+      <WhatsAppButton />
     </div>
   );
 };

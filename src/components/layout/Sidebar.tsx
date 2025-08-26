@@ -20,7 +20,7 @@ interface SidebarProps {
 }
 
 const navigationItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: FileText, label: "Projects", path: "/projects" },
   { icon: Calendar, label: "Test Plan", path: "/test-plans" },
   { icon: GitBranch, label: "RTM (Requirements Traceability Matrix)", path: "/rtm" },
