@@ -14,6 +14,10 @@ import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { Signup } from "./pages/Signup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import RtmPage from "./pages/RtmPage";
+import Reports from "./pages/Reports";
+import { Notifications } from "./pages/Notifications";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +97,46 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <Profile />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/rtm"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <RtmPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Reports />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Notifications />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Settings />
                 </DashboardLayout>
               </PrivateRoute>
             }
