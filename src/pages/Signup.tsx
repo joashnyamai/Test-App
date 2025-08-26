@@ -133,167 +133,184 @@ return (
     <div className="absolute bottom-20 left-40 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000 dark:bg-pink-800 dark:opacity-20"></div>
 
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="relative z-10 w-full max-w-md mx-4"
-    >
-      <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 dark:border-gray-700">
-        <CardHeader className="text-center space-y-2 pb-6">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="mx-auto mb-4"
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5 }}
+  className="relative z-10 w-full max-w-4xl mx-8"
+>
+  <Card className="border border-gray-200 dark:border-gray-700 shadow-2xl backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 p-10">
+    <CardHeader className="text-center space-y-2 pb-6">
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+        className="mx-auto mb-4"
+      >
+        <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+          <HiSparkles className="w-8 h-8 text-white" />
+        </div>
+      </motion.div>
+      <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        Create Account
+      </CardTitle>
+      <CardDescription className="text-gray-600 dark:text-gray-300">
+        Fill in the details to sign up
+      </CardDescription>
+    </CardHeader>
+
+    <CardContent className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="grid grid-cols-2 md:grid-cols-3 gap-6"
+      >
+        {/* First Name */}
+        <div>
+          <Label className="text-gray-700 dark:text-gray-200">First Name</Label>
+          <Input
+            type="text"
+            value={form.firstName}
+            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+            placeholder="Enter your first name"
+            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        {/* Last Name */}
+        <div>
+          <Label className="text-gray-700 dark:text-gray-200">Last Name</Label>
+          <Input
+            type="text"
+            value={form.lastName}
+            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+            placeholder="Enter your last name"
+            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        {/* Username */}
+        <div>
+          <Label className="text-gray-700 dark:text-gray-200">Username</Label>
+          <Input
+            type="text"
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+            placeholder="Choose a username"
+            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="col-span-2">
+          <Label className="text-gray-700 dark:text-gray-200">Email</Label>
+          <Input
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            placeholder="Enter your email"
+            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="relative">
+          <Label className="text-gray-700 dark:text-gray-200">Password</Label>
+          <Input
+            type={passwordVisible ? "text" : "password"}
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            placeholder="Create a password"
+            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          />
+          <button
+            type="button"
+            onClick={() => setPasswordVisible(!passwordVisible)}
+            className="absolute right-2 top-9 text-gray-600 dark:text-gray-300"
           >
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <HiSparkles className="w-8 h-8 text-white" />
-            </div>
-          </motion.div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Create Account
-          </CardTitle>
-          <CardDescription className="text-gray-600 dark:text-gray-300">
-            Fill in the details to sign up
-          </CardDescription>
-        </CardHeader>
+            {passwordVisible ? <HiEyeOff /> : <HiEye />}
+          </button>
+        </div>
 
-        <CardContent className="space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="space-y-4"
+        {/* Confirm Password */}
+        <div className="relative">
+          <Label className="text-gray-700 dark:text-gray-200">Confirm Password</Label>
+          <Input
+            type={passwordVisible ? "text" : "password"}
+            value={form.confirmPassword}
+            onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+            placeholder="Confirm your password"
+            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+          />
+          <button
+            type="button"
+            onClick={() => setPasswordVisible(!passwordVisible)}
+            className="absolute right-2 top-9 text-gray-600 dark:text-gray-300"
           >
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">First Name</Label>
-                <Input
-                  type="text"
-                  value={form.firstName}
-                  onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                  className="border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="Enter your first name"
-                />
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</Label>
-                <Input
-                  type="text"
-                  value={form.lastName}
-                  onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                  className="border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="Enter your last name"
-                />
-              </div>
-            </div>
+            {passwordVisible ? <HiEyeOff /> : <HiEye />}
+          </button>
+        </div>
 
-            <div>
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Username</Label>
-              <Input
-                type="text"
-                value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
-                className="border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Choose a username"
-              />
-            </div>
+        {/* Role */}
+        <div>
+          <Label className="text-gray-700 dark:text-gray-200">Role</Label>
+          <select
+            value={form.role}
+            onChange={(e) => setForm({ ...form, role: e.target.value })}
+            className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+          >
+            <option value="QA Tester">QA Tester</option>
+            <option value="Developer">Developer</option>
+            <option value="Project Manager">Project Manager</option>
+            <option value="Designer">Designer</option>
+            <option value="IT Support">IT Support</option>
+          </select>
+        </div>
+      </motion.div>
 
-            <div>
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
-              <Input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Enter your email"
-              />
-            </div>
+      {/* Terms */}
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="terms"
+          checked={form.agreeToTerms}
+          onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
+          className="w-4 h-4 accent-blue-600 dark:accent-purple-500"
+        />
+        <label htmlFor="terms" className="text-sm text-gray-700 dark:text-gray-300">
+          I agree to the{" "}
+          <span className="text-blue-600 dark:text-purple-400 cursor-pointer">Terms</span> and{" "}
+          <span className="text-blue-600 dark:text-purple-400 cursor-pointer">Privacy Policy</span>
+        </label>
+      </div>
 
-            <div className="relative">
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</Label>
-              <Input
-                type={passwordVisible ? "text" : "password"}
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Create a password"
-              />
-              <button
-                type="button"
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                className="absolute right-2 top-9"
-              >
-                {passwordVisible ? <HiEyeOff /> : <HiEye />}
-              </button>
-            </div>
+      {/* Signup button */}
+      <Button
+        onClick={handleSignup}
+        className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
+        disabled={loading}
+      >
+        {loading ? "Creating account..." : "Sign Up"}
+      </Button>
 
-            <div className="relative">
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</Label>
-              <Input
-                type={passwordVisible ? "text" : "password"}
-                value={form.confirmPassword}
-                onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                className="border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Confirm your password"
-              />
-              <button
-                type="button"
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                className="absolute right-2 top-9"
-              >
-                {passwordVisible ? <HiEyeOff /> : <HiEye />}
-              </button>
-            </div>
-            <div>
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Role</Label>
-              <select
-               value={form.role}
-               onChange={(e) => setForm({ ...form, role: e.target.value })}
-               className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-gray-600 
-               focus:border-blue-500 focus:ring-blue-500 
-               dark:bg-gray-700 dark:text-white">
-                <option value="QA Tester">QA Tester</option>
-                <option value="Developer">Developer</option>
-                 <option value="Project Manager">Project Manager</option>
-                 <option value="Designer">Designer</option>
-                 <option value="IT Support">IT Support</option>
-                 </select>
-                 {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-                 </div>
+      {/* Social logins */}
+      <div className="flex justify-center gap-3 mt-4">
+        <Button variant="outline" size="icon" className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300"><FaGithub /></Button>
+        <Button variant="outline" size="icon" className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300"><FaLinkedin /></Button>
+        <Button variant="outline" size="icon" className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300"><FaGoogle /></Button>
+      </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={form.agreeToTerms}
-                onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
-                className="w-4 h-4"
-              />
-              <label htmlFor="terms" className="text-sm">
-                I agree to the <span className="text-blue-600 cursor-pointer">Terms and Conditions</span> and <span className="text-blue-600 cursor-pointer">Privacy Policy</span>
-              </label>
-            </div>
-            {errors.agreeToTerms && <p className="text-red-500 text-sm">{errors.agreeToTerms}</p>}
+      {/* Login link */}
+      <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+        Already have an account?{" "}
+        <a href="/login" className="text-blue-600 dark:text-purple-400 hover:underline">
+          Log in
+        </a>
+      </p>
+    </CardContent>
+  </Card>
+</motion.div>
 
-            <Button onClick={handleSignup} className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Sign Up"}
-            </Button>
-
-            <div className="flex justify-center gap-3 mt-4">
-              <Button variant="outline" size="icon"><FaGithub /></Button>
-              <Button variant="outline" size="icon"><FaLinkedin /></Button>
-              <Button variant="outline" size="icon"><FaGoogle /></Button>
-            </div>
-
-            <p className="text-sm text-center mt-2">
-              Already have an account?{" "}
-              <span className="text-blue-600 cursor-pointer" onClick={() => navigate("/login")}>Login</span>
-            </p>
-          </motion.div>
-        </CardContent>
-      </Card>
-    </motion.div>
 
     {/* Theme toggle button */}
     <button
