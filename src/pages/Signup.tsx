@@ -245,6 +245,22 @@ return (
                 {passwordVisible ? <HiEyeOff /> : <HiEye />}
               </button>
             </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Role</Label>
+              <select
+               value={form.role}
+               onChange={(e) => setForm({ ...form, role: e.target.value })}
+               className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-gray-600 
+               focus:border-blue-500 focus:ring-blue-500 
+               dark:bg-gray-700 dark:text-white">
+                <option value="QA Tester">QA Tester</option>
+                <option value="Developer">Developer</option>
+                 <option value="Project Manager">Project Manager</option>
+                 <option value="Designer">Designer</option>
+                 <option value="IT Support">IT Support</option>
+                 </select>
+                 {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+                 </div>
 
             <div className="flex items-center space-x-2">
               <input
