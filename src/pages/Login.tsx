@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { HiEye, HiEyeOff, HiMail, HiKey, HiSparkles } from "react-icons/hi";
-import { FaGithub, FaLinkedin, FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/user-store";
 import { motion } from "framer-motion";
@@ -19,7 +18,6 @@ export const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // new states for reset
   const [resetMode, setResetMode] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetMessage, setResetMessage] = useState("");
@@ -56,8 +54,6 @@ export const Login = () => {
       setResetMessage("Please enter your email");
       return;
     }
-    // mock reset function
-    // connect this to backend or Firebase later
     setResetMessage("If an account exists, a reset link has been sent to " + resetEmail);
     setResetEmail("");
     setResetMode(false);
@@ -65,7 +61,6 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
-      {/* Decorative blobs */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--primary)_0%,_transparent_70%)] opacity-20 dark:opacity-10"></div>
       <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob dark:bg-blue-800 dark:opacity-20"></div>
       <div className="absolute top-40 right-20 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000 dark:bg-purple-800 dark:opacity-20"></div>
@@ -164,6 +159,7 @@ export const Login = () => {
                   </button>
                 </p>
 
+                {/* Sign In button */}
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button
                     onClick={handleLogin}
@@ -180,6 +176,17 @@ export const Login = () => {
                     )}
                   </Button>
                 </motion.div>
+
+                {/* Sign Up link */}
+                <p className="text-center text-sm text-gray-600 dark:text-gray-300">
+                  Don’t have an account?{" "}
+                  <button
+                    onClick={() => navigate("/signup")}
+                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                  >
+                    Sign up
+                  </button>
+                </p>
               </motion.div>
             ) : (
               <div className="space-y-4">
@@ -209,8 +216,6 @@ export const Login = () => {
                 </div>
               </div>
             )}
-
-            {/* Social login & signup remain the same */}
           </CardContent>
         </Card>
       </motion.div>
