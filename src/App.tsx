@@ -9,14 +9,10 @@ import LandingPage from "./pages/LandingPage";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
-import { Notifications } from "./pages/Notifications"; // Import the Notifications component
 import Projects from "./pages/Projects"; // Import the Projects component
-import RtmPage from "./pages/RtmPage"; // Import the RTM page
 import QaReport from "./pages/QaReport"; // Import the QaReport component
-import Reports from "./pages/Reports"; // Import the Reports component
 import { Signup } from "./pages/Signup";
 import Profile from "./pages/Profile";
-import Settings from "./pages/Settings"; // Import the Settings component
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,7 +20,7 @@ const queryClient = new QueryClient();
 // Protect routes
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" replace />;
+  return token ? children : <Navigate to="/" replace />;
 };
 
 const App = () => (
@@ -97,46 +93,6 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <Profile />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/rtm"
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <RtmPage />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Notifications />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Settings />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/reports"
-            element={
-              <PrivateRoute>
-                <DashboardLayout>
-                  <Reports />
                 </DashboardLayout>
               </PrivateRoute>
             }
