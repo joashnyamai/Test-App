@@ -3,10 +3,9 @@
 @tailwind utilities;
 
 /* QA Testing Management System Design System */
-
 @layer base {
   :root {
-    /* Core Colors - Clean Minimal Palette */
+    /* Core Colors */
     --background: 0 0% 100%;
     --foreground: 222 22% 17%;
 
@@ -16,73 +15,29 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 22% 17%;
 
-    /* Primary - Clean Blue */
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 221 83% 48%;
 
-    /* Secondary - Neutral Gray */
     --secondary: 210 40% 98%;
     --secondary-foreground: 222 22% 17%;
 
-    /* Muted - Subtle Gray */
     --muted: 210 40% 98%;
     --muted-foreground: 215 16% 47%;
 
-    /* Accent - Subtle Blue */
     --accent: 210 40% 98%;
     --accent-foreground: 222 22% 17%;
 
-    /* Status Colors */
     --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
 
-    /* UI Elements */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
 
-    /* Dashboard Specific */
-    --dashboard-bg: 0 0% 100%;
-    --sidebar-bg: 0 0% 100%;
-    --sidebar-foreground: 222 22% 17%;
-    --sidebar-active: 221 83% 53%;
-    --navbar-bg: 0 0% 100%;
-
-    /* Gradients - Subtle */
-    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%), hsl(221 83% 58%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 41%));
-    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 55%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 99%));
-
-    /* Shadows - Clean */
+    /* Shadows */
     --shadow-card: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
     --shadow-hover: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
-    --shadow-focus: 0 0 0 2px hsl(221 83% 53% / 0.2);
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -113,54 +68,43 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 221 83% 53%;
+  }
 
-    /* Dark Mode Dashboard Specific */
-    --dashboard-bg: 222 47% 11%;
-    --sidebar-bg: 222 47% 11%;
-    --navbar-bg: 222 37% 13%;
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
 @layer components {
-  /* Dashboard Cards - Clean Minimal Style */
+  /* Cards */
   .metric-card {
-    @apply bg-card border border-border rounded-lg p-6 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] transition-all duration-200;
+    @apply bg-card border border-border rounded-lg p-6 transition-all duration-200;
+    box-shadow: var(--shadow-card);
   }
-  
-  .metric-card-primary {
-    @apply bg-card border-primary/30;
-  }
-  
-  .metric-card-success {
-    @apply bg-card border-success/30;
-  }
-  
-  .metric-card-warning {
-    @apply bg-card border-warning/30;
-  }
-  
-  .metric-card-destructive {
-    @apply bg-card border-destructive/30;
+  .metric-card:hover {
+    box-shadow: var(--shadow-hover);
   }
 
-  /* Navigation - Clean */
+  /* Navigation */
   .nav-item {
     @apply flex items-center space-x-3 px-3 py-2 mx-2 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-150;
   }
-  
   .nav-item-active {
     @apply bg-primary/10 text-primary font-medium;
   }
 
-  /* Tables - Clean */
+  /* Tables */
   .data-table {
-    @apply w-full border-collapse bg-card rounded-lg overflow-hidden shadow-[var(--shadow-card)];
+    @apply w-full border-collapse bg-card rounded-lg overflow-hidden;
+    box-shadow: var(--shadow-card);
   }
-  
   .table-header {
     @apply bg-muted/30 text-muted-foreground font-medium text-sm;
   }
-  
   .table-row {
     @apply border-b border-border hover:bg-muted/20 transition-colors duration-150;
   }
@@ -169,43 +113,36 @@
   .status-badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
-  
   .status-passed {
     @apply bg-success/10 text-success border border-success/20;
   }
-  
   .status-failed {
     @apply bg-destructive/10 text-destructive border border-destructive/20;
   }
-  
   .status-blocked {
     @apply bg-warning/10 text-warning border border-warning/20;
   }
-  
   .status-not-run {
     @apply bg-muted text-muted-foreground border border-border;
   }
-
-  /* Animations */
-  .fade-in {
-    @apply animate-in fade-in-0 duration-300;
-  }
-  
-  .slide-in-right {
-    @apply animate-in slide-in-from-right-6 duration-300;
-  }
-  
-  .scale-in {
-    @apply animate-in zoom-in-95 duration-200;
-  }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+@layer utilities {
+  /* Animations */
+  @keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
   }
 
-  body {
-    @apply bg-background text-foreground;
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
   }
 }

@@ -1,271 +1,173 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Menu, Search, ArrowRight, CheckCircle, Users, BarChart3, Palette, Code, Monitor, X } from "lucide-react";
+import { useState } from "react";
+import { Menu, X, Search, User, ChevronDown } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
-const navItems = [
-  { name: "Products", path: "/products", dropdown: ["Test Management", "Bug Tracking", "Reporting"] },
-  { name: "Solutions", path: "/solutions", dropdown: ["Automation", "Manual Testing", "Performance"] },
-  {
-    name: "Why Us",
-    path: "/why-us",
-    megaDropdown: [
-      { title: "System of Work", desc: "Blueprint for how teams work together" },
-      { title: "Marketplace", desc: "Connect thousands of apps to your products" },
-      { title: "Customers", desc: "Case studies & stories powered by teamwork" },
-      { title: "FedRAMP", desc: "Compliant solutions for the public sector" },
-      { title: "Resilience", desc: "Enterprise-grade & highly performant infrastructure" },
-      { title: "Platform", desc: "Deeply integrated, reliable & secure platform" },
-      { title: "Trust center", desc: "Ensure your data's security, compliance & availability" },
-    ]
-  },
-  { name: "Resources", path: "/resources", dropdown: ["Docs", "Blog", "Webinars"] },
-  { name: "Enterprise", path: "/enterprise", dropdown: ["Custom Solutions", "Integrations", "Support"] },
-];
-
-const categories = [
-  { name: "Software", icon: Code, color: "bg-purple-100", iconColor: "text-purple-600" },
-  { name: "Product management", icon: CheckCircle, color: "bg-yellow-100", iconColor: "text-yellow-600" },
-  { name: "Marketing", icon: BarChart3, color: "bg-blue-100", iconColor: "text-blue-600" },
-  { name: "Project management", icon: Monitor, color: "bg-orange-100", iconColor: "text-orange-600" },
-  { name: "Design", icon: Palette, color: "bg-pink-100", iconColor: "text-pink-600" },
-  { name: "IT", icon: Users, color: "bg-green-100", iconColor: "text-green-600" },
-];
-
-export default function LandingHeader({ user }) {
+export default function Navbar({ user }: { user?: { name?: string } }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const initials = user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : "";
 
-  // Close drawer on outside click
-  React.useEffect(() => {
-    if (!drawerOpen) return;
-    const handleClick = (e) => {
-      if (e.target.closest('.drawer') || e.target.closest('.hamburger')) return;
-      setDrawerOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [drawerOpen]);
+  const menuItems = [
+    { label: "Why Us" },
+    {
+      label: "Solutions",
+      dropdown: ["HRMS", "Payroll", "Recruitment"],
+    },
+    {
+      label: "Resources",
+      dropdown: ["Blog", "Case Studies", "Guides"],
+    },
+    { label: "Contact" },
+  ];
 
-  const toggleDropdown = (itemName) => {
-    setActiveDropdown(activeDropdown === itemName ? null : itemName);
-  };
+  const initials = user?.name?.trim()
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "U";
 
   return (
-    <div className="w-full">
-      <nav className="w-full bg-white flex items-center px-4 py-4 shadow relative">
-        {/* Modern searchbar overlay */}
-        {searchOpen ? (
-          <div className="fixed top-0 left-0 w-full h-24 bg-white z-50 flex items-center justify-center transition-all duration-300">
-            <div className="w-full max-w-2xl flex items-center px-6">
-              <input
-                type="text"
-                placeholder="Search Keywords"
-                className="w-full h-14 px-6 text-xl rounded-full border border-gray-300 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
-                autoFocus
-              />
-              <button className="ml-4 text-gray-400 text-2xl" onClick={() => setSearchOpen(false)} aria-label="Close search">✕</button>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* Mobile: Hamburger and Logo */}
-            <div className="flex items-center justify-between w-full lg:hidden">
-              <div className="flex items-center">
-                <button className="hamburger mr-2 rounded-full bg-blue-100 p-2" onClick={() => setDrawerOpen(true)} aria-label="Open menu">
-                  <Menu className="w-5 h-5 text-blue-700" />
-                </button>
-                <img src={"https://i.postimg.cc/PrG43h61/kiwami.jpg"} alt="KiwamiTestCloud Logo" className="w-28 h-12 object-contain" />
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <button onClick={() => setSearchOpen(true)} className="text-blue-600 hover:text-blue-300">
-                  <Search className="w-5 h-5" />
-                </button>
-                <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">
-                  {initials || "U"}
-                </div>
-              </div>
-            </div>
+    <nav className="bg-white shadow-md fixed top-0 w-full z-50">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <div
+          onClick={() => navigate("/")}
+          className="flex items-center space-x-2 cursor-pointer"
+        >
+          <svg
+            className="w-10 h-10 text-blue-600"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="50" cy="50" r="48" stroke="currentColor" strokeWidth={4} />
+            <path
+              d="M30 50 L45 65 L70 35"
+              stroke="currentColor"
+              strokeWidth={8}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="text-2xl font-bold text-gray-800">MyBrand</span>
+        </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center justify-between w-full max-w-7xl mx-auto gap-6">
-              <div className="flex items-center gap-4">
-                <img src={"https://i.postimg.cc/PrG43h61/kiwami.jpg"} alt="KiwamiTestCloud Logo" className="w-36 h-16 object-contain" />
-                <span className="text-3xl font-semi-bold text-blue-700">KiwamiTestCloud</span>
-              </div>
-              
-              <div className="hidden lg:flex items-center gap-2 flex-1 justify-center">
-                {navItems.map(item => (
-                  <div key={item.name} className="relative group mx-2">
-                    <button className="text-black font-medium px-3 py-2 hover:text-blue-300" onClick={() => item.path && navigate(item.path)}>{item.name}</button>
-                    {/* Mega dropdown for 'Why Us' */}
-                    {item.megaDropdown ? (
-                      <div className="absolute left-1/2 -translate-x-1/2 top-full bg-white text-black rounded-2xl shadow-xl mt-4 p-8 min-w-[700px] flex flex-wrap gap-8 hidden group-hover:flex z-20">
-                        {item.megaDropdown.map((opt, idx) => (
-                          <div key={opt.title} className="w-1/3 mb-4 cursor-pointer" onClick={() => navigate(`${item.path}#${opt.title.toLowerCase().replace(/\s/g, '-')}`)}>
-                            <div className="font-bold text-lg mb-1 flex items-center gap-2">
-                              {opt.title}
-                              {opt.title === "System of Work" && (
-                                <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">NEW</span>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-600">{opt.desc}</div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="absolute left-0 top-full bg-white text-black rounded shadow-lg mt-2 min-w-[160px] hidden group-hover:block z-10">
-                        {item.dropdown.map(opt => (
-                          <div key={opt} className="px-4 py-2 hover:bg-blue-50 cursor-pointer" onClick={() => navigate(`${item.path}#${opt.toLowerCase().replace(/\s/g, '-')}`)}>{opt}</div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              
-              <div className="hidden lg:flex items-center gap-4">
-                <button onClick={() => setSearchOpen(true)} className="text-blue-600 hover:text-blue-300">
-                  <Search className="w-6 h-6" />
-                </button>
-                <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
-                  {initials || ""}
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Drawer */}
-            <div
-              className={`drawer fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
-              style={{ borderTopRightRadius: '1rem', borderBottomRightRadius: '1rem' }}
-            >
-              <div className="flex flex-col p-6 h-full">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <img src={"https://i.postimg.cc/PrG43h61/kiwami.jpg"} alt="Logo" className="w-10 h-10 rounded-full" />
-                    <span className="text-xl font-bold text-blue-700">KiwamiTestCloud</span>
-                  </div>
-                  <button onClick={() => setDrawerOpen(false)} className="p-1">
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-                
-                <div className="flex-1 overflow-y-auto">
-                  {navItems.map(item => (
-                    <div key={item.name} className="mb-4">
-                      <button
-                        className="w-full text-left text-black font-medium px-3 py-3 hover:bg-blue-50 rounded-lg flex items-center justify-between"
-                        onClick={() => { item.path && navigate(item.path); toggleDropdown(item.name) }}
-                      >
-                        <span>{item.name}</span>
-                        <span className="transform transition-transform">
-                          {activeDropdown === item.name ? "−" : "+"}
-                        </span>
-                      </button>
-                      
-                      {activeDropdown === item.name && (
-                        <div className="pl-6 mt-2 space-y-2">
-                          {item.dropdown?.map(opt => (
-                            <a key={opt} href={`${item.path}#${opt.toLowerCase().replace(/\s/g, '-')}`} className="block text-gray-600 hover:text-blue-600 py-2">
-                              {opt}
-                            </a>
-                          ))}
-                          {item.megaDropdown?.map(opt => (
-                            <a key={opt.title} href={`${item.path}#${opt.title.toLowerCase().replace(/\s/g, '-')}`} className="block text-gray-600 hover:text-blue-600 py-2">
-                              {opt.title}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex space-x-8 items-center">
+          {menuItems.map((item, idx) => (
+            <div key={idx} className="relative group">
+              <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium">
+                <span>{item.label}</span>
+                {item.dropdown && <ChevronDown size={16} />}
+              </button>
+              {item.dropdown && (
+                <div className="absolute left-0 mt-2 bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform translate-y-2 transition-all">
+                  {item.dropdown?.map((opt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => navigate(`/${opt.toLowerCase()}`)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-left w-full"
+                    >
+                      {opt}
+                    </button>
                   ))}
                 </div>
-                
-                <div className="pt-6 border-t border-gray-200">
-                  <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg mx-auto mb-4">
-                    {initials || "U"}
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
-            
-            {/* Overlay for smooth close */}
-            {drawerOpen && (
-              <div 
-                className="fixed inset-0 bg-black bg-opacity-20 z-40 transition-opacity duration-300 ease-in-out lg:hidden"
-                onClick={() => setDrawerOpen(false)}
-              />
-            )}
-          </>
-        )}
-      </nav>
-
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-50 to-white min-h-screen flex flex-col items-center justify-center px-4 py-20">
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Main Headline */}
-          <div className="mb-8">
-            <h1 className="text-5xl md:text-7xl font-semi-bold text-blue-700 mb-4 leading-tight">
-              KiwamiTestCloud:
-            </h1>
-            <h2 className="text-5xl md:text-7xl text-gray-900 mb-6 leading-tight">
-              from <span className="relative">
-                bugs
-                <svg className="absolute -bottom-2 left-0 w-full h-4" viewBox="0 0 200 20" fill="none">
-                  <path d="M5 15C50 5, 100 5, 195 15" stroke="#f5be1bff" strokeWidth="8" strokeLinecap="round"/>
-                </svg>
-              </span> to dreams
-            </h2>
-          </div>
-
-          {/* CTA Button */}
-          <div className="mb-16">
+          ))}
+          <button onClick={() => setShowSearch(!showSearch)}>
+            <Search className="w-5 h-5 text-gray-600 hover:text-blue-600" />
+          </button>
+          {user ? (
+            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+              {initials}
+            </div>
+          ) : (
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
+              className="px-4 py-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50"
             >
-              Get started
-              <ArrowRight className="w-5 h-5" />
+              Login
+            </button>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <button onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? (
+              <X className="w-6 h-6 text-gray-700" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-700" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      {showSearch && (
+        <div className="bg-gray-100 p-4">
+          <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="flex-1 px-4 py-2 outline-none bg-transparent"
+            />
+            <button onClick={() => setShowSearch(false)} className="p-2">
+              <X className="w-6 h-6 text-gray-500 hover:text-gray-700" />
             </button>
           </div>
+        </div>
+      )}
 
-          {/* Category Icons */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-5xl mx-auto">
-            {categories.map((category, index) => {
-              const IconComponent = category.icon;
-              return (
-                <div 
-                  key={category.name} 
-                  className="flex flex-col items-center group cursor-pointer transform transition-all duration-300 hover:scale-110"
-                >
-                  <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mb-3 group-hover:shadow-lg transition-all duration-300`}>
-                    <IconComponent className={`w-8 h-8 ${category.iconColor}`} />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
-                    {category.name}
-                  </span>
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          {menuItems.map((item, idx) => (
+            <div key={idx} className="border-b border-gray-100">
+              <button className="w-full text-left px-4 py-3 flex justify-between items-center hover:bg-gray-50">
+                {item.label}
+                {item.dropdown && <ChevronDown size={16} />}
+              </button>
+              {item.dropdown && (
+                <div className="pl-6 pb-2">
+                  {item.dropdown?.map((opt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        navigate(`/${opt.toLowerCase()}`);
+                        setIsOpen(false);
+                      }}
+                      className="block w-full text-left px-2 py-1 text-gray-700 hover:bg-gray-100 rounded"
+                    >
+                      {opt}
+                    </button>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Login Link */}
-          <div className="mt-16">
-            <p className="text-gray-600">
-              Already have an account?{' '}
+              )}
+            </div>
+          ))}
+          <div className="px-4 py-3">
+            {user ? (
+              <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+                {initials}
+              </div>
+            ) : (
               <button
-                className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-all duration-200"
-                onClick={() => navigate('/login')}
+                onClick={() => {
+                  navigate("/login");
+                  setIsOpen(false);
+                }}
+                className="w-full px-4 py-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50"
               >
                 Login
               </button>
-            </p>
+            )}
           </div>
         </div>
-      </section>
-    </div>
+      )}
+    </nav>
   );
 }
