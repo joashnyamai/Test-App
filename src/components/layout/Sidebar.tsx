@@ -49,7 +49,7 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
       <div className="flex items-center justify-between p-4 border-b border-border">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-md flex items-center justify-center overflow-hidden">
+            <div className="w-15 h-10 rounded-md flex items-center justify-center overflow-hidden">
               <img src="https://i.postimg.cc/Y9GGPV6J/image.png" 
               alt="Logo" 
               className="w-full h-full object-cover" 
