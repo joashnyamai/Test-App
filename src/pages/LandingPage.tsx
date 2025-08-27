@@ -232,7 +232,7 @@ export default function LandingPage() {
             from <span className="relative">
               bugs
               <svg className="absolute -bottom-2 left-0 w-full h-4" viewBox="0 0 200 20" fill="none">
-                <path d="M5 15C50 5, 100 5, 195 15" stroke="#FCD34D" strokeWidth="6" strokeLinecap="round"/>
+                <path d="M5 15C50 5, 100 5, 195 15" stroke="#FCD34D" strokeWidth="10" strokeLinecap="round"/>
               </svg>
             </span> to dreams
           </h2>
@@ -272,9 +272,13 @@ export default function LandingPage() {
           <div className="mt-16">
             <p className="text-gray-600">
               Already have an account?{' '}
-              <a href="/signup" className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-all duration-200">
+              <button
+                type="button"
+                onClick={() => navigate('/signup')}
+                className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-all duration-200"
+              >
                 Login
-              </a>
+              </button>
             </p>
           </div>
         </div>
