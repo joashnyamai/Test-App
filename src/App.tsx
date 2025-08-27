@@ -8,10 +8,12 @@ import { Dashboard } from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
+import { BugBash } from "./pages/BugBash";
 import { Login } from "./pages/Login";
 import Projects from "./pages/Projects"; // Import the Projects component
 import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { TestPlans } from "./pages/TestPlans"; // Import the TestPlans component
+import { TestSuites } from "./pages/TestSuites"; // Import the TestSuites component
 import { Signup } from "./pages/Signup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -83,6 +85,16 @@ const App = () => (
             }
           />
           <Route
+            path="/bug-bashes"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <BugBash />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/qa-report"
             element={
               <PrivateRoute>
@@ -98,6 +110,16 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <TestPlans />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/test-suites"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <TestSuites />
                 </DashboardLayout>
               </PrivateRoute>
             }
