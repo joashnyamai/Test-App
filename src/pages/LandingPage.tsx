@@ -225,7 +225,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-gray-50 to-white min-h-screen flex flex-col items-center justify-center px-4 py-20">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-4 leading-tight">
+          <h1 className="text-5xl md:text-7xl text-blue-600 mb-4 leading-tight">
             KiwamiTestCloud:
           </h1>
           <h2 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
