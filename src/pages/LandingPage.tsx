@@ -113,7 +113,7 @@ export default function LandingPage() {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center justify-between w-full max-w-7xl mx-auto gap-6">
               <div className="flex items-center gap-4">
-                <img src={"https://i.postimg.cc/PrG43h61/kiwami.jpg"} alt="KiwamiTestCloud Logo" className="w-36 h-16 object-contain" />
+                <img src={"https://i.postimg.cc/59gWSxjX/image.png"} alt="KiwamiTestCloud Logo" className="w-36 h-16 object-contain" />
                 <span className="text-3xl font-bold text-blue-700">KiwamiTestCloud</span>
               </div>
               
@@ -122,7 +122,7 @@ export default function LandingPage() {
                   <div key={item.name} className="relative group mx-2">
                     <button className="text-black font-medium px-3 py-2 hover:text-blue-300">{item.name}</button>
                     {item.megaDropdown ? (
-                      <div className="absolute left-1/2 -translate-x-1/2 top-full bg-white text-black rounded-2xl shadow-xl mt-4 p-8 min-w-[700px] flex flex-wrap gap-8 hidden group-hover:flex z-20">
+                      <div className="absolute left-1/2 -translate-x-1/2 top-full bg-white text-black rounded-2xl shadow-xl mt-4 p-8 min-w-[700px] hidden group-hover:flex flex-wrap gap-8 z-20">
                         {item.megaDropdown.map((opt, idx) => (
                           <div key={opt.title} className="w-1/3 mb-4">
                             <div className="font-bold text-lg mb-1 flex items-center gap-2">
@@ -164,7 +164,7 @@ export default function LandingPage() {
               <div className="flex flex-col p-6 h-full">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
-                    <img src={"https://i.postimg.cc/PrG43h61/kiwami.jpg"} alt="Logo" className="w-10 h-10 rounded-full" />
+                    <img src={"https://i.postimg.cc/59gWSxjX/image.png"} alt="Logo" className="w-10 h-10 rounded-full" />
                     <span className="text-xl font-bold text-blue-700">KiwamiTestCloud</span>
                   </div>
                   <button onClick={() => setDrawerOpen(false)} className="p-1">

@@ -12,21 +12,25 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSettingsStore } from "@/store/settings-store";
 
 interface NavbarProps {
   onMenuClick: () => void;
 }
 
 export const Navbar = ({ onMenuClick }: NavbarProps) => {
-  const [darkMode, setDarkMode] = useState(false);
+  const { settings, setSettings } = useSettingsStore();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-  }, [darkMode]);
+    if (settings.theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [settings.theme]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -79,8 +83,8 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
         {/* Right side - Actions */}
         <div className="flex items-center space-x-2 lg:space-x-3">
           {/* Dark mode toggle */}
-          <Button variant="ghost" size="icon" onClick={() => setDarkMode(!darkMode)} className="hidden sm:flex h-9 w-9">
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          <Button variant="ghost" size="icon" onClick={() => setSettings({ theme: settings.theme === "dark" ? "light" : "dark" })} className="hidden sm:flex h-9 w-9">
+            {settings.theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>
 
           {/* Notifications dropdown */}
