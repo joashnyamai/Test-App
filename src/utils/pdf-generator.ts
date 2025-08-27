@@ -1,5 +1,7 @@
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { QaReport } from '@/types/qa-report';
+import { TestPlanData } from '@/pages/TestPlans';
 
 export const generateQaReportPdf = (report: QaReport): void => {
   const doc = new jsPDF();
@@ -221,4 +223,218 @@ export const generateQaReportPdf = (report: QaReport): void => {
 
   // Save the PDF
   doc.save(`QA_Report_${report.reportTitle.replace(/\s+/g, '_')}_${report.id}.pdf`);
+};
+
+export const generateTestPlanPDF = (data: TestPlanData): void => {
+  const doc = new jsPDF();
+
+  // Add header
+  doc.setFontSize(24);
+  doc.setTextColor(40, 40, 40);
+  doc.text('TEST PLAN', 105, 15, { align: 'center' });
+  doc.setFontSize(12);
+  doc.text('Generated on: ' + new Date().toLocaleDateString(), 105, 25, { align: 'center' });
+  doc.addPage();
+  
+  // Document Control
+  doc.setFontSize(16);
+  doc.text('Document Control', 14, 30);
+  doc.setFontSize(12);
+  doc.text(`Project Name: ${data.projectName}`, 14, 40);
+  doc.text(`Version: ${data.version}`, 14, 50);
+  doc.text(`Prepared By: ${data.preparedBy}`, 14, 60);
+  doc.text(`Date Created: ${data.dateCreated}`, 14, 70);
+  doc.text(`Reviewed By: ${data.reviewedBy}`, 14, 80);
+  doc.text(`Approval Date: ${data.approvalDate}`, 14, 90);
+  doc.addPage();
+  
+  // Introduction
+  doc.setFontSize(16);
+  doc.text('Introduction', 14, 15);
+  doc.setFontSize(12);
+  doc.text(data.introduction, 14, 25);
+  
+  // Objectives
+  doc.setFontSize(16);
+  doc.text('Objectives', 14, 50);
+  doc.setFontSize(12);
+  doc.text(data.objectives, 14, 60);
+  
+  // In Scope
+  doc.setFontSize(16);
+  doc.text('In Scope', 14, 80);
+  doc.setFontSize(12);
+  doc.text(data.inScope, 14, 90);
+  
+  // Out of Scope
+  doc.setFontSize(16);
+  doc.text('Out of Scope', 14, 110);
+  doc.setFontSize(12);
+  doc.text(data.outOfScope, 14, 120);
+  
+  // Test Items
+  doc.setFontSize(16);
+  doc.text('Test Items / Features to be Tested', 14, 140);
+  doc.setFontSize(12);
+  doc.text(data.testItems, 14, 150);
+  
+  // Test Strategy
+  doc.setFontSize(16);
+  doc.text('Test Strategy', 14, 180);
+  doc.setFontSize(12);
+  doc.text(data.testStrategy, 14, 190);
+  
+  // Test Environment
+  doc.setFontSize(16);
+  doc.text('Test Environment', 14, 220);
+  doc.setFontSize(12);
+  doc.text(data.testEnvironment, 14, 230);
+  
+  // Entry Criteria
+  doc.setFontSize(16);
+  doc.text('Entry Criteria', 14, 260);
+  doc.setFontSize(12);
+  doc.text(data.entryCriteria, 14, 270);
+  
+  // Exit Criteria
+  doc.setFontSize(16);
+  doc.text('Exit Criteria', 14, 300);
+  doc.setFontSize(12);
+  doc.text(data.exitCriteria, 14, 310);
+  
+  // Test Deliverables
+  doc.setFontSize(16);
+  doc.text('Test Deliverables', 14, 340);
+  doc.setFontSize(12);
+  doc.text(data.testDeliverables, 14, 350);
+  
+  // Roles and Responsibilities
+  doc.setFontSize(16);
+  doc.text('Roles and Responsibilities', 14, 380);
+  autoTable(doc, {
+    head: [['Name', 'Role', 'Responsibilities']],
+    body: data.roles.map(role => [role.name, role.role, role.responsibilities]),
+    startY: 390,
+    theme: 'grid',
+  });
+  
+  // Schedule
+  doc.setFontSize(16);
+  doc.text('Schedule & Milestones', 14, 420);
+  autoTable(doc, {
+    head: [['Task', 'Start Date', 'End Date', 'Owner']],
+    body: data.schedule.map(item => [item.task, item.startDate, item.endDate, item.owner]),
+    startY: 430,
+    theme: 'grid',
+  });
+  
+  // Risks and Mitigation
+  doc.setFontSize(16);
+  doc.text('Risks and Mitigation', 14, 460);
+  autoTable(doc, {
+    head: [['Risk', 'Impact', 'Mitigation']],
+    body: data.risks.map(risk => [risk.risk, risk.impact, risk.mitigation]),
+    startY: 470,
+    theme: 'grid',
+  });
+  
+  // Save the PDF
+  doc.save(`Test_Plan_${data.projectName.replace(/\s+/g, '_')}.pdf`);
+
+  // Document Control
+  doc.setFontSize(16);
+  doc.text(`Project Name: ${data.projectName}`, 14, 30);
+  doc.text(`Version: ${data.version}`, 14, 40);
+  doc.text(`Prepared By: ${data.preparedBy}`, 14, 50);
+  doc.text(`Date Created: ${data.dateCreated}`, 14, 60);
+  doc.text(`Reviewed By: ${data.reviewedBy}`, 14, 70);
+  doc.text(`Approval Date: ${data.approvalDate}`, 14, 80);
+  doc.addPage();
+
+  // Introduction
+  doc.setFontSize(14);
+  doc.text('Introduction', 14, 15);
+  doc.setFontSize(12);
+  doc.text(data.introduction, 14, 25);
+
+  // Objectives
+  doc.setFontSize(14);
+  doc.text('Objectives', 14, 50);
+  doc.setFontSize(12);
+  doc.text(data.objectives, 14, 60);
+
+  // In Scope
+  doc.setFontSize(14);
+  doc.text('In Scope', 14, 80);
+  doc.setFontSize(12);
+  doc.text(data.inScope, 14, 90);
+
+  // Out of Scope
+  doc.setFontSize(14);
+  doc.text('Out of Scope', 14, 110);
+  doc.setFontSize(12);
+  doc.text(data.outOfScope, 14, 120);
+
+  // Test Items
+  doc.setFontSize(14);
+  doc.text('Test Items / Features to be Tested', 14, 140);
+  doc.setFontSize(12);
+  doc.text(data.testItems, 14, 150);
+
+  // Test Strategy
+  doc.setFontSize(14);
+  doc.text('Test Strategy', 14, 180);
+  doc.setFontSize(12);
+  doc.text(data.testStrategy, 14, 190);
+
+  // Test Environment
+  doc.setFontSize(14);
+  doc.text('Test Environment', 14, 220);
+  doc.setFontSize(12);
+  doc.text(data.testEnvironment, 14, 230);
+
+  // Entry Criteria
+  doc.setFontSize(14);
+  doc.text('Entry Criteria', 14, 260);
+  doc.setFontSize(12);
+  doc.text(data.entryCriteria, 14, 270);
+
+  // Exit Criteria
+  doc.setFontSize(14);
+  doc.text('Exit Criteria', 14, 300);
+  doc.setFontSize(12);
+  doc.text(data.exitCriteria, 14, 310);
+
+  // Test Deliverables
+  doc.setFontSize(14);
+  doc.text('Test Deliverables', 14, 340);
+  doc.setFontSize(12);
+  doc.text(data.testDeliverables, 14, 350);
+
+  // Roles and Responsibilities
+  doc.setFontSize(14);
+  doc.text('Roles and Responsibilities', 14, 380);
+  data.roles.forEach((role, index) => {
+    doc.setFontSize(12);
+    doc.text(`${role.name} - ${role.role}: ${role.responsibilities}`, 14, 390 + (index * 10));
+  });
+
+  // Schedule
+  doc.setFontSize(14);
+  doc.text('Schedule & Milestones', 14, 420);
+  data.schedule.forEach((item, index) => {
+    doc.setFontSize(12);
+    doc.text(`${item.task}: ${item.startDate} to ${item.endDate} (Owner: ${item.owner})`, 14, 430 + (index * 10));
+  });
+
+  // Risks and Mitigation
+  doc.setFontSize(14);
+  doc.text('Risks and Mitigation', 14, 460);
+  data.risks.forEach((risk, index) => {
+    doc.setFontSize(12);
+    doc.text(`${risk.risk} (Impact: ${risk.impact}) - Mitigation: ${risk.mitigation}`, 14, 470 + (index * 10));
+  });
+
+  // Save the PDF
+  doc.save(`Test_Plan_${data.projectName.replace(/\s+/g, '_')}.pdf`);
 };

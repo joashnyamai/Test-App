@@ -11,6 +11,7 @@ import { BugReports } from "./pages/BugReports";
 import { Login } from "./pages/Login";
 import Projects from "./pages/Projects"; // Import the Projects component
 import QaReport from "./pages/QaReport"; // Import the QaReport component
+import { TestPlans } from "./pages/TestPlans"; // Import the TestPlans component
 import { Signup } from "./pages/Signup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
@@ -87,6 +88,16 @@ const App = () => (
               <PrivateRoute>
                 <DashboardLayout>
                   <QaReport />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/test-plans"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <TestPlans />
                 </DashboardLayout>
               </PrivateRoute>
             }
