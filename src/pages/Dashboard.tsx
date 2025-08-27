@@ -387,8 +387,8 @@ export const Dashboard = () => {
               {[
                 { icon: FileText, title: "Create Test Plan", desc: "Add new test scenarios", action: () => navigate("/test-plans") },
                 { icon: Bug, title: "Report Bug", desc: "Submit new defect", action: () => navigate("/bug-reports") },
-                { icon: Calendar, title: "Schedule Bug Bash", desc: "Organize testing session" },
-                { icon: Clock, title: "Run Test Suite", desc: "Execute test plans" }
+                { icon: Calendar, title: "Schedule Bug Bash", desc: "Organize testing session", action: () => navigate("/bug-bashes") },
+                { icon: Clock, title: "Run Test Suite", desc: "Execute test plans", action: () => navigate("/test-suites") },
               ].map((action, i) => (
                 <Button
                   key={i}
