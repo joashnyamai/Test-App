@@ -164,7 +164,7 @@ export default function LandingPage() {
               <div className="flex flex-col p-6 h-full">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
-                    <img src={"https://i.postimg.cc/59gWSxjX/image.png"} alt="Logo" className="w-10 h-10 rounded-full" />
+                    <img src={"https://i.postimg.cc/PrG43h61/kiwami.jpg"} alt="Logo" className="w-10 h-10 rounded-full" />
                     <span className="text-xl font-bold text-blue-700">KiwamiTestCloud</span>
                   </div>
                   <button onClick={() => setDrawerOpen(false)} className="p-1">
@@ -423,7 +423,7 @@ export default function LandingPage() {
             <a href="#solutions" className="hover:text-blue-400 transition">Solutions</a>
             <a href="#whyus" className="hover:text-blue-400 transition">Why Us</a>
             <a href="#resources" className="hover:text-blue-400 transition">Resources</a>
-            <a href="/login" className="hover:text-blue-400 transition">Login</a>
+            <a href="/signup" className="hover:text-blue-400 transition">Login</a>
             <a href="/signup" className="hover:text-blue-400 transition">Signup</a>
             <a href="#contact" className="hover:text-blue-400 transition">Contact</a>
             <a href="#enterprise" className="hover:text-blue-400 transition">Enterprise</a>

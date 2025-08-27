@@ -21,6 +21,7 @@ export const Signup = () => {
     fullName: "", 
     email: "", 
     password: "", 
+    role: "", // Add role property
   });
 
   // Login form state
@@ -53,8 +54,9 @@ export const Signup = () => {
       username: signupForm.email.split('@')[0],
       email: signupForm.email,
       password: signupForm.password,
-      role: "User",
+      role: signupForm.role || "QA Tester, Developer, Project Manager",   // Use selected role
     });
+    
     
     // Simulate API call
     setTimeout(() => {
@@ -163,6 +165,19 @@ export const Signup = () => {
                       </button>
                     </div>
                   </div>
+                  {/* Role Selection */}
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Select Role</Label>
+                    <select id="role"
+                    value={signupForm.role || ""}
+                    onChange={(e) => setSignupForm({ ...signupForm, role: e.target.value })}
+                    className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                      <option value="" disabled>Select your role</option>
+                      <option value="QA Tester">QA Tester</option>
+                      <option value="Developer">Developer</option>
+                      <option value="Project Manager">Project Manager</option>
+                      </select>
+                      </div>
 
                   {/* Signup button */}
                   <Button
