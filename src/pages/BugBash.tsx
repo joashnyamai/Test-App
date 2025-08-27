@@ -98,7 +98,7 @@ export const BugBash = () => {
           <h1 className="text-3xl font-bold text-foreground">Bug Bash Sessions</h1>
           <p className="text-muted-foreground mt-1">Organize and track bug bash events</p>
         </div>
-        <Button className="bg-gradient-primary hover:bg-primary-hover" onClick={handleCreateBugBash}>
+        <Button className="bg-primary text-primary-foreground hover:bg-primary/90 border-2 border-primary" onClick={handleCreateBugBash}>
           <Plus className="w-4 h-4 mr-2" />
           New Bug Bash
         </Button>

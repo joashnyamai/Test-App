@@ -143,7 +143,7 @@ export const BugReports = () => {
           <h1 className="text-3xl font-bold text-foreground">Bug Reports</h1>
           <p className="text-muted-foreground mt-1">Track and manage reported issues</p>
         </div>
-        <Button className="bg-gradient-primary hover:bg-primary-hover" onClick={handleCreateBug}>
+        <Button className="bg-primary text-primary-foreground hover:bg-primary/90 border-2 border-primary" onClick={handleCreateBug}>
           <Plus className="w-4 h-4 mr-2" />
           Report Bug
         </Button>
