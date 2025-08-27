@@ -1,324 +1,295 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { HiEye, HiEyeOff, HiMail, HiKey, HiSparkles } from "react-icons/hi";
-import { FaGithub, FaLinkedin, FaGoogle } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/user-store";
-import { motion } from "framer-motion";
 
 export const Signup = () => {
   const navigate = useNavigate();
-  const { addUser, getUserByEmail } = useUserStore();
-  const [form, setForm] = useState({ 
-    firstName: "", 
-    lastName: "", 
-    username: "", 
-    email: "", 
-    password: "", 
-    confirmPassword: "",
-    role: "QA Tester", // Default role
-    agreeToTerms: false
-  });
+  const { login, addUser } = useUserStore();
+  const [isLogin, setIsLogin] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({ 
-    firstName: "", 
-    lastName: "", 
-    username: "", 
-    email: "", 
-    password: "", 
-    confirmPassword: "",
-    role: "",
-    agreeToTerms: ""
-  });
-  const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { 
-    firstName: "", 
-    lastName: "", 
-    username: "", 
+  // Signup form state
+  const [signupForm, setSignupForm] = useState({ 
+    fullName: "", 
     email: "", 
     password: "", 
-    confirmPassword: "",
-    role: "",
-    agreeToTerms: ""
+  });
+
+  // Login form state
+  const [loginForm, setLoginForm] = useState({ 
+    email: "", 
+    password: "" 
+  });
+
+  const handleSignup = async () => {
+    setLoading(true);
+    setError("");
+    
+    // Basic validation
+    if (!signupForm.fullName || !signupForm.email || !signupForm.password) {
+      setError("All fields are required");
+      setLoading(false);
+      return;
+    }
+
+    if (signupForm.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
+
+    // Add user to store
+    addUser({
+      firstName: signupForm.fullName.split(' ')[0],
+      lastName: signupForm.fullName.split(' ').slice(1).join(' ') || "User",
+      username: signupForm.email.split('@')[0],
+      email: signupForm.email,
+      password: signupForm.password,
+      role: "User",
+    });
+    
+    // Simulate API call
+    setTimeout(() => {
+      navigate("/dashboard", { replace: true });
+      setLoading(false);
+    }, 1000);
   };
 
-  if (!form.firstName.trim()) {
-    newErrors.firstName = "First name is required"; valid = false;
-  }
+  const handleLogin = async () => {
+    setLoading(true);
+    setError("");
 
-  if (!form.lastName.trim()) {
-    newErrors.lastName = "Last name is required"; valid = false;
-  }
+    if (!loginForm.email || !loginForm.password) {
+      setError("Email and Password are required");
+      setLoading(false);
+      return;
+    }
 
-  if (!form.username.trim()) {
-    newErrors.username = "Username is required"; valid = false;
-  } else if (form.username.length < 3) {
-    newErrors.username = "Username must be at least 3 characters"; valid = false;
-  }
-
-  // Check if email already exists
-  const existingUser = getUserByEmail(form.email);
-  if (existingUser) {
-    newErrors.email = "Email already registered"; valid = false;
-  }
-
-  if (!form.email) {
-    newErrors.email = "Email is required"; valid = false;
-  } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-    newErrors.email = "Email is invalid"; valid = false;
-  }
-
-  if (!form.password) {
-    newErrors.password = "Password is required"; valid = false;
-  } else if (form.password.length < 8) {
-    newErrors.password = "Password must be at least 8 characters"; valid = false;
-  } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(form.password)) {
-    newErrors.password = "Password must contain uppercase, lowercase, and number"; valid = false;
-  }
-
-  if (form.password !== form.confirmPassword) {
-    newErrors.confirmPassword = "Passwords do not match"; valid = false;
-  }
-
-  if (!form.agreeToTerms) {
-    newErrors.agreeToTerms = "You must agree to the terms and conditions"; valid = false;
-  }
-
-  setErrors(newErrors);
-  return valid;
-};
-
-const handleSignup = async () => {
-  setLoading(true);
-  if (!validateForm()) {
+    const success = login(loginForm.email, loginForm.password);
+    if (success) {
+      navigate("/dashboard", { replace: true });
+    } else {
+      setError("Invalid email or password");
+    }
     setLoading(false);
-    return;
-  }
-  
-  // Add user to store with role
-  addUser({
-    firstName: form.firstName,
-    lastName: form.lastName,
-    username: form.username,
-    email: form.email,
-    password: form.password,
-    role: form.role, // Include role
-  });
-  
-  navigate("/login", { replace: true });
-  setLoading(false);
-};
+  };
 
-return (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
-    {/* Background decorative elements */}
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--primary)_0%,_transparent_70%)] opacity-20 dark:opacity-10"></div>
-    <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob dark:bg-blue-800 dark:opacity-20"></div>
-    <div className="absolute top-40 right-20 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000 dark:bg-purple-800 dark:opacity-20"></div>
-    <div className="absolute bottom-20 left-40 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000 dark:bg-pink-800 dark:opacity-20"></div>
-
-    <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5 }}
-  className="relative z-10 w-full max-w-4xl mx-8"
->
-  <Card className="border border-gray-200 dark:border-gray-700 shadow-2xl backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 p-10">
-    <CardHeader className="text-center space-y-2 pb-6">
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-        className="mx-auto mb-4"
-      >
-        <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-          <HiSparkles className="w-8 h-8 text-white" />
-        </div>
-      </motion.div>
-      <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-        Create Account
-      </CardTitle>
-      <CardDescription className="text-gray-600 dark:text-gray-300">
-        Fill in the details to sign up
-      </CardDescription>
-    </CardHeader>
-
-    <CardContent className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="grid grid-cols-2 md:grid-cols-3 gap-6"
-      >
-        {/* First Name */}
-        <div>
-          <Label className="text-gray-700 dark:text-gray-200">First Name</Label>
-          <Input
-            type="text"
-            value={form.firstName}
-            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-            placeholder="Enter your first name"
-            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-0">
+      <div className="w-full h-screen flex flex-col md:flex-row">
+        {/* Left side - Image - Full height and width on desktop */}
+        <div className="hidden md:flex md:w-1/2 h-full">
+          <img
+            src="https://media.istockphoto.com/id/1471444483/photo/customer-satisfaction-survey-concept-users-rate-service-experiences-on-online-application.jpg?b=1&s=612x612&w=0&k=20&c=2Wtg2ur5qT3ZFazgxIJYmkPD1ds8p_IVMmrABjZ4NOM="
+            alt="Smart farming illustration"
+            className="w-full h-full object-cover"
           />
         </div>
 
-        {/* Last Name */}
-        <div>
-          <Label className="text-gray-700 dark:text-gray-200">Last Name</Label>
-          <Input
-            type="text"
-            value={form.lastName}
-            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-            placeholder="Enter your last name"
-            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-          />
-        </div>
+        {/* Right side - Form - Full height and width on desktop */}
+        <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-6 md:p-8">
+          <div className="w-full max-w-md">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle className="text-2xl font-bold text-center md:text-left">
+                {isLogin ? "Welcome Back" : "Create Account"}
+              </CardTitle>
+              <CardDescription className="text-center md:text-left">
+                {isLogin ? "Sign in to your account to continue" : "Fill in the details to sign up"}
+              </CardDescription>
+            </CardHeader>
 
-        {/* Username */}
-        <div>
-          <Label className="text-gray-700 dark:text-gray-200">Username</Label>
-          <Input
-            type="text"
-            value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
-            placeholder="Choose a username"
-            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-          />
-        </div>
+            <CardContent className="px-0 pb-0 space-y-4">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+                  {error}
+                </div>
+              )}
 
-        {/* Email */}
-        <div className="col-span-2">
-          <Label className="text-gray-700 dark:text-gray-200">Email</Label>
-          <Input
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            placeholder="Enter your email"
-            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-          />
-        </div>
+              {!isLogin ? (
+                /* SIGNUP FORM */
+                <>
+                  {/* Full Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      value={signupForm.fullName}
+                      onChange={(e) => setSignupForm({ ...signupForm, fullName: e.target.value })}
+                      placeholder="Enter your full name"
+                      className="w-full"
+                    />
+                  </div>
 
-        {/* Password */}
-        <div className="relative">
-          <Label className="text-gray-700 dark:text-gray-200">Password</Label>
-          <Input
-            type={passwordVisible ? "text" : "password"}
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            placeholder="Create a password"
-            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-          />
-          <button
-            type="button"
-            onClick={() => setPasswordVisible(!passwordVisible)}
-            className="absolute right-2 top-9 text-gray-600 dark:text-gray-300"
-          >
-            {passwordVisible ? <HiEyeOff /> : <HiEye />}
-          </button>
-        </div>
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={signupForm.email}
+                      onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
+                      placeholder="Enter your email"
+                      className="w-full"
+                    />
+                  </div>
 
-        {/* Confirm Password */}
-        <div className="relative">
-          <Label className="text-gray-700 dark:text-gray-200">Confirm Password</Label>
-          <Input
-            type={passwordVisible ? "text" : "password"}
-            value={form.confirmPassword}
-            onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-            placeholder="Confirm your password"
-            className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
-          />
-          <button
-            type="button"
-            onClick={() => setPasswordVisible(!passwordVisible)}
-            className="absolute right-2 top-9 text-gray-600 dark:text-gray-300"
-          >
-            {passwordVisible ? <HiEyeOff /> : <HiEye />}
-          </button>
-        </div>
+                  {/* Password */}
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={passwordVisible ? "text" : "password"}
+                        value={signupForm.password}
+                        onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
+                        placeholder="Create a password"
+                        className="w-full pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setPasswordVisible(!passwordVisible)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                      >
+                        {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
+                      </button>
+                    </div>
+                  </div>
 
-        {/* Role */}
-        <div>
-          <Label className="text-gray-700 dark:text-gray-200">Role</Label>
-          <select
-            value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
-            className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-          >
-            <option value="QA Tester">QA Tester</option>
-            <option value="Developer">Developer</option>
-            <option value="Project Manager">Project Manager</option>
-            <option value="Designer">Designer</option>
-            <option value="IT Support">IT Support</option>
-          </select>
-        </div>
-      </motion.div>
+                  {/* Signup button */}
+                  <Button
+                    onClick={handleSignup}
+                    className="w-full mt-2 bg-green-600 hover:bg-green-700"
+                    disabled={loading}
+                  >
+                    {loading ? "Creating account..." : "Create Account"}
+                  </Button>
 
-      {/* Terms */}
-      <div className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          id="terms"
-          checked={form.agreeToTerms}
-          onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
-          className="w-4 h-4 accent-blue-600 dark:accent-purple-500"
-        />
-        <label htmlFor="terms" className="text-sm text-gray-700 dark:text-gray-300">
-          I agree to the{" "}
-          <span className="text-blue-600 dark:text-purple-400 cursor-pointer">Terms</span> and{" "}
-          <span className="text-blue-600 dark:text-purple-400 cursor-pointer">Privacy Policy</span>
-        </label>
+                  {/* Divider */}
+                  <div className="relative flex items-center py-4">
+                    <div className="flex-grow border-t border-gray-300"></div>
+                    <span className="flex-shrink mx-4 text-gray-500 text-sm">Or continue with</span>
+                    <div className="flex-grow border-t border-gray-300"></div>
+                  </div>
+
+                  {/* Google signin */}
+                  <Button
+                    variant="outline"
+                    className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <FaGoogle className="mr-2 text-blue-500" />
+                    Continue with Google
+                  </Button>
+
+                  {/* Login link */}
+                  <p className="text-center text-sm text-gray-600 mt-6">
+                    Already have an account?{" "}
+                    <button 
+                      onClick={() => setIsLogin(true)} 
+                      className="text-green-600 hover:underline font-medium"
+                    >
+                      Sign in
+                    </button>
+                  </p>
+                </>
+              ) : (
+                /* LOGIN FORM */
+                <>
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="loginEmail">Email</Label>
+                    <div className="relative">
+                      <HiMail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                      <Input
+                        id="loginEmail"
+                        type="email"
+                        value={loginForm.email}
+                        onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                        placeholder="Enter your email"
+                        className="w-full pl-10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div className="space-y-2">
+                    <Label htmlFor="loginPassword">Password</Label>
+                    <div className="relative">
+                      <HiKey className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                      <Input
+                        id="loginPassword"
+                        type={passwordVisible ? "text" : "password"}
+                        value={loginForm.password}
+                        onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                        placeholder="Enter your password"
+                        className="w-full pl-10 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setPasswordVisible(!passwordVisible)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                      >
+                        {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Forgot password */}
+                  <div className="text-right">
+                    <button className="text-sm text-green-600 hover:underline">
+                      Forgot password?
+                    </button>
+                  </div>
+
+                  {/* Login button */}
+                  <Button
+                    onClick={handleLogin}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    disabled={loading}
+                  >
+                    {loading ? "Signing in..." : "Sign In"}
+                  </Button>
+
+                  {/* Divider */}
+                  <div className="relative flex items-center py-4">
+                    <div className="flex-grow border-t border-gray-300"></div>
+                    <span className="flex-shrink mx-4 text-gray-500 text-sm">Or continue with</span>
+                    <div className="flex-grow border-t border-gray-300"></div>
+                  </div>
+
+                  {/* Google signin */}
+                  <Button
+                    variant="outline"
+                    className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                  >
+                    <FaGoogle className="mr-2 text-blue-500" />
+                    Continue with Google
+                  </Button>
+
+                  {/* Signup link */}
+                  <p className="text-center text-sm text-gray-600 mt-6">
+                    Don't have an account?{" "}
+                    <button 
+                      onClick={() => setIsLogin(false)} 
+                      className="text-green-600 hover:underline font-medium"
+                    >
+                      Sign up
+                    </button>
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </div>
+        </div>
       </div>
-
-      {/* Signup button */}
-      <Button
-        onClick={handleSignup}
-        className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
-        disabled={loading}
-      >
-        {loading ? "Creating account..." : "Sign Up"}
-      </Button>
-
-      {/* Social logins */}
-      <div className="flex justify-center gap-3 mt-4">
-        <Button variant="outline" size="icon" className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300"><FaGithub /></Button>
-        <Button variant="outline" size="icon" className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300"><FaLinkedin /></Button>
-        <Button variant="outline" size="icon" className="border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300"><FaGoogle /></Button>
-      </div>
-
-      {/* Login link */}
-      <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
-        Already have an account?{" "}
-        <a href="/login" className="text-blue-600 dark:text-purple-400 hover:underline">
-          Log in
-        </a>
-      </p>
-    </CardContent>
-  </Card>
-</motion.div>
-
-
-    {/* Theme toggle button */}
-    <button
-      onClick={() => setDarkMode(!darkMode)}
-      className="absolute top-4 right-4 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200"
-    >
-      {darkMode ? "🌙" : "☀️"}
-    </button>
-  </div>
-);
+    </div>
+  );
 };
