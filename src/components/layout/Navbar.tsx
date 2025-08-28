@@ -1,4 +1,4 @@
-import { Search, Bell, User, Sun, Moon, X, Settings, LogOut } from "lucide-react";
+import { Search, Bell, User, Sun, Moon, X, Settings, LogOut, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -142,8 +142,8 @@ export const Navbar = ({ onMenuClick }: NavbarProps) => {
             onClick={() => navigate("/dashboard")}
           >
             <div className="w-8 h-8 rounded-md bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">KT</span>
-            </div>
+              <Rocket className="w-5 h-5 text-white" />
+              </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Kiwami TestCloud
             </span>
