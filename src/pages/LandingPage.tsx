@@ -455,7 +455,7 @@ export default function LandingPage() {
           {/* Futuristic CTA Button */}
           <div className="mb-16">
             <button 
-              onClick={() => navigateToAuth('signup')}
+              onClick={() => navigateToAuth('login')}
               className="group relative bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 text-white font-bold px-12 py-6 rounded-full text-xl transition-all duration-500 transform hover:scale-110 shadow-2xl hover:shadow-cyan-500/25 flex items-center gap-3 mx-auto overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>

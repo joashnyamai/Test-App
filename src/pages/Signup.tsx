@@ -3,15 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HiEye, HiEyeOff, HiMail, HiKey, HiSparkles } from "react-icons/hi";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/user-store";
 
 export const Signup = () => {
   const navigate = useNavigate();
-  const { login, addUser } = useUserStore();
-  const [isLogin, setIsLogin] = useState(false);
+  const { addUser } = useUserStore();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,9 +18,11 @@ export const Signup = () => {
   // Signup form state
   const [signupForm, setSignupForm] = useState({ 
     fullName: "", 
+    username: "",
     email: "", 
     password: "", 
     confirmPassword: "",
+<<<<<<< HEAD
     role: "", // Add role property
   });
 
@@ -29,6 +30,9 @@ export const Signup = () => {
   const [loginForm, setLoginForm] = useState({ 
     email: "", 
     password: "" 
+=======
+    role: "", 
+>>>>>>> 494866d244a3ef6b24c1bca3223467a972a9cb3c
   });
 
   const handleSignup = async () => {
@@ -36,7 +40,7 @@ export const Signup = () => {
     setError("");
     
     // Basic validation
-    if (!signupForm.fullName || !signupForm.email || !signupForm.password) {
+    if (!signupForm.fullName || !signupForm.username || !signupForm.email || !signupForm.password || !signupForm.confirmPassword || !signupForm.role) {
       setError("All fields are required");
       setLoading(false);
       return;
@@ -48,6 +52,7 @@ export const Signup = () => {
       return;
     }
 
+<<<<<<< HEAD
     // Add user to store
     addUser({
       firstName: signupForm.fullName.split(' ')[0],
@@ -73,17 +78,41 @@ export const Signup = () => {
 
     if (!loginForm.email || !loginForm.password) {
       setError("Email and Password are required");
+=======
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(signupForm.email)) {
+      setError("Please enter a valid email address");
+>>>>>>> 494866d244a3ef6b24c1bca3223467a972a9cb3c
       setLoading(false);
       return;
     }
 
-    const success = login(loginForm.email, loginForm.password);
-    if (success) {
-      navigate("/dashboard", { replace: true });
-    } else {
-      setError("Invalid email or password");
+    if (signupForm.password !== signupForm.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    // Add user to store
+    addUser({
+      firstName: signupForm.fullName.split(' ')[0],
+      lastName: signupForm.fullName.split(' ').slice(1).join(' ') || "User",
+      username: signupForm.username,
+      email: signupForm.email,
+      password: signupForm.password,
+      role: signupForm.role || "QA Tester",
+    });
+    
+    // Simulate API call
+    setTimeout(() => {
+      navigate("/login", { replace: true });
+      setLoading(false);
+    }, 1000);
+  };
+
+  const navigateToLogin = () => {
+    navigate("/login");
   };
 
   return (
@@ -103,10 +132,10 @@ export const Signup = () => {
           <div className="w-full max-w-md">
             <CardHeader className="px-0 pt-0">
               <CardTitle className="text-2xl font-bold text-center md:text-left">
-                {isLogin ? "Welcome Back" : "Create Account"}
+                Create Account
               </CardTitle>
               <CardDescription className="text-center md:text-left">
-                {isLogin ? "Sign in to your account to continue" : "Fill in the details to sign up"}
+                Fill in the details to sign up
               </CardDescription>
             </CardHeader>
 
@@ -117,192 +146,140 @@ export const Signup = () => {
                 </div>
               )}
 
-              {!isLogin ? (
-                /* SIGNUP FORM */
-                <>
-                  {/* Full Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      value={signupForm.fullName}
-                      onChange={(e) => setSignupForm({ ...signupForm, fullName: e.target.value })}
-                      placeholder="Enter your full name"
-                      className="w-full"
-                    />
-                  </div>
+              {/* Full Name */}
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  value={signupForm.fullName}
+                  onChange={(e) => setSignupForm({ ...signupForm, fullName: e.target.value })}
+                  placeholder="Enter your full name"
+                  className="w-full"
+                />
+              </div>
 
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={signupForm.email}
-                      onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
-                      placeholder="Enter your email"
-                      className="w-full"
-                    />
-                  </div>
+              {/* Username */}
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  value={signupForm.username}
+                  onChange={(e) => setSignupForm({ ...signupForm, username: e.target.value })}
+                  placeholder="Choose a username"
+                  className="w-full"
+                />
+              </div>
 
-                  {/* Password */}
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={passwordVisible ? "text" : "password"}
-                        value={signupForm.password}
-                        onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
-                        placeholder="Create a password"
-                        className="w-full pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setPasswordVisible(!passwordVisible)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                      >
-                        {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
-                      </button>
-                    </div>
-                  </div>
-                  {/* Role Selection */}
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Select Role</Label>
-                    <select id="role"
-                    value={signupForm.role || ""}
-                    onChange={(e) => setSignupForm({ ...signupForm, role: e.target.value })}
-                    className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
-                      <option value="" disabled>Select your role</option>
-                      <option value="QA Tester">QA Tester</option>
-                      <option value="Developer">Developer</option>
-                      <option value="Project Manager">Project Manager</option>
-                      </select>
-                      </div>
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={signupForm.email}
+                  onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
+                  placeholder="Enter your email"
+                  className="w-full"
+                />
+              </div>
 
-                  {/* Signup button */}
-                  <Button
-                    onClick={handleSignup}
-                    className="w-full mt-2 bg-green-600 hover:bg-green-700"
-                    disabled={loading}
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={passwordVisible ? "text" : "password"}
+                    value={signupForm.password}
+                    onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
+                    placeholder="Create a password"
+                    className="w-full pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                   >
-                    {loading ? "Creating account..." : "Create Account"}
-                  </Button>
+                    {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
+                  </button>
+                </div>
+              </div>
 
-                  {/* Divider */}
-                  <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-gray-300"></div>
-                    <span className="flex-shrink mx-4 text-gray-500 text-sm">Or continue with</span>
-                    <div className="flex-grow border-t border-gray-300"></div>
-                  </div>
-
-                  {/* Google signin */}
-                  <Button
-                    variant="outline"
-                    className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+              {/* Confirm Password */}
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={passwordVisible ? "text" : "password"}
+                    value={signupForm.confirmPassword}
+                    onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })}
+                    placeholder="Confirm your password"
+                    className="w-full pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                   >
-                    <FaGoogle className="mr-2 text-blue-500" />
-                    Continue with Google
-                  </Button>
+                    {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
+                  </button>
+                </div>
+              </div>
 
-                  {/* Login link */}
-                  <p className="text-center text-sm text-gray-600 mt-6">
-                    Already have an account?{" "}
-                    <button 
-                      onClick={() => setIsLogin(true)} 
-                      className="text-green-600 hover:underline font-medium"
-                    >
-                      Sign in
-                    </button>
-                  </p>
-                </>
-              ) : (
-                /* LOGIN FORM */
-                <>
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="loginEmail">Email</Label>
-                    <div className="relative">
-                      <HiMail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="loginEmail"
-                        type="email"
-                        value={loginForm.email}
-                        onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                        placeholder="Enter your email"
-                        className="w-full pl-10"
-                      />
-                    </div>
-                  </div>
+              {/* Role Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="role">Select Role</Label>
+                <select 
+                  id="role"
+                  value={signupForm.role || ""}
+                  onChange={(e) => setSignupForm({ ...signupForm, role: e.target.value })}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  <option value="" disabled>Select your role</option>
+                  <option value="QA Tester">QA Tester</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Project Manager">Project Manager</option>
+                </select>
+              </div>
 
-                  {/* Password */}
-                  <div className="space-y-2">
-                    <Label htmlFor="loginPassword">Password</Label>
-                    <div className="relative">
-                      <HiKey className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input
-                        id="loginPassword"
-                        type={passwordVisible ? "text" : "password"}
-                        value={loginForm.password}
-                        onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                        placeholder="Enter your password"
-                        className="w-full pl-10 pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setPasswordVisible(!passwordVisible)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                      >
-                        {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
-                      </button>
-                    </div>
-                  </div>
+              {/* Signup button */}
+              <Button
+                onClick={handleSignup}
+                className="w-full mt-2 bg-green-600 hover:bg-green-700"
+                disabled={loading}
+              >
+                {loading ? "Creating account..." : "Create Account"}
+              </Button>
 
-                  {/* Forgot password */}
-                  <div className="text-right">
-                    <button className="text-sm text-green-600 hover:underline">
-                      Forgot password?
-                    </button>
-                  </div>
+              {/* Divider */}
+              <div className="relative flex items-center py-4">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="flex-shrink mx-4 text-gray-500 text-sm">Or continue with</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
 
-                  {/* Login button */}
-                  <Button
-                    onClick={handleLogin}
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    disabled={loading}
-                  >
-                    {loading ? "Signing in..." : "Sign In"}
-                  </Button>
+              {/* Google signin */}
+              <Button
+                variant="outline"
+                className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                <FaGoogle className="mr-2 text-blue-500" />
+                Continue with Google
+              </Button>
 
-                  {/* Divider */}
-                  <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-gray-300"></div>
-                    <span className="flex-shrink mx-4 text-gray-500 text-sm">Or continue with</span>
-                    <div className="flex-grow border-t border-gray-300"></div>
-                  </div>
-
-                  {/* Google signin */}
-                  <Button
-                    variant="outline"
-                    className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
-                  >
-                    <FaGoogle className="mr-2 text-blue-500" />
-                    Continue with Google
-                  </Button>
-
-                  {/* Signup link */}
-                  <p className="text-center text-sm text-gray-600 mt-6">
-                    Don't have an account?{" "}
-                    <button 
-                      onClick={() => setIsLogin(false)} 
-                      className="text-green-600 hover:underline font-medium"
-                    >
-                      Sign up
-                    </button>
-                  </p>
-                </>
-              )}
+              {/* Login link */}
+              <p className="text-center text-sm text-gray-600 mt-6">
+                Already have an account?{" "}
+                <button 
+                  onClick={navigateToLogin} 
+                  className="text-green-600 hover:underline font-medium"
+                >
+                  Sign in
+                </button>
+              </p>
             </CardContent>
           </div>
         </div>
