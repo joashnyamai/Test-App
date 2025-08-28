@@ -16,7 +16,7 @@ const GeminiChatbot = () => {
     if (open && messages.length === 1) {
       speak(messages[0].text);
     }
-  }, [open]);
+  }, [open, messages]);
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -46,7 +46,19 @@ const GeminiChatbot = () => {
       setMessages((msgs) => [...msgs, { sender: "bot", text: botText }]);
       speak(botText);
     } catch (err) {
-      setMessages((msgs) => [...msgs, { sender: "bot", text: "Error connecting to KiwamiTestCloud." }]);
+      console.error("Error sending message to Gemini:", err);
+      let errorMessage = "Error connecting to KiwamiTestCloud.";
+      if (err instanceof Error) {
+        // Provide more specific error messages based on the error type
+        if (err.message.includes("API key")) {
+          errorMessage = "API configuration error. Please contact support.";
+        } else if (err.message.includes("network")) {
+          errorMessage = "Network error. Please check your connection and try again.";
+        } else {
+          errorMessage = `Error: ${err.message}`;
+        }
+      }
+      setMessages((msgs) => [...msgs, { sender: "bot", text: errorMessage }]);
     }
     setLoading(false);
   };
@@ -56,7 +68,7 @@ const GeminiChatbot = () => {
   };
 
   return (
-  <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       {/* Chatbot FAB */}
       <button
         className="bg-blue-600 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center text-3xl hover:bg-blue-700 transition-all"
@@ -118,47 +130,6 @@ const GeminiChatbot = () => {
               aria-label="Clear chat"
             >
               🗑️ Clear
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
-  return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <button
-        className="bg-blue-600 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center text-3xl hover:bg-blue-700 transition-all"
-        aria-label="Open chatbot"
-        onClick={() => setLoading((open) => !open)}
-      >
-        💬
-      </button>
-      {loading && (
-        <div className="absolute bottom-20 right-0 w-80 bg-white rounded-xl shadow-xl p-4 flex flex-col gap-3">
-          <div className="h-64 overflow-y-auto mb-2">
-            {messages.map((msg, i) => (
-              <div key={i} className={`mb-2 text-sm ${msg.sender === "user" ? "text-right" : "text-left"}`}>
-                <span className={msg.sender === "user" ? "bg-blue-100 text-blue-800 px-3 py-2 rounded-lg inline-block" : "bg-gray-100 text-gray-800 px-3 py-2 rounded-lg inline-block"}>{msg.text}</span>
-              </div>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <input
-              className="flex-1 border rounded-lg px-3 py-2"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask Gemini..."
-              aria-label="Chat input"
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              disabled={loading}
-            />
-            <button
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-              onClick={sendMessage}
-              disabled={loading}
-            >
-              Send
             </button>
           </div>
         </div>

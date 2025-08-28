@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, Search, ArrowRight, CheckCircle, Users, BarChart3, Palette, Code, Monitor, X, Star, Zap, Shield, Target, Sparkles, TrendingUp, Globe, Rocket, Brain, Eye } from "lucide-react";
+import GeminiChatbot from "../components/GeminiChatbot"; // Import the GeminiChatbot component
 
 const navItems = [
   { 
@@ -214,12 +215,12 @@ export default function LandingPage() {
             <div className="hidden lg:flex items-center justify-between w-full max-w-7xl mx-auto">
               {/* Logo Section */}
               <div className="flex items-center gap-4">
-  <div className="flex items-center gap-3">
-    <img 
-      src="https://i.postimg.cc/59gWSxjX/image.png" 
-      alt="KiwamiTestCloud Logo" 
-      className="w-12 h-12 rounded-2xl shadow-xl object-cover"
-    />
+                <div className="flex items-center gap-3">
+                  <img 
+                    src="https://i.postimg.cc/59gWSxjX/image.png" 
+                    alt="KiwamiTestCloud Logo" 
+                    className="w-12 h-12 rounded-2xl shadow-xl object-cover"
+                  />
     <div className="flex flex-col">
       <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
         KiwamiTestCloud
@@ -344,7 +345,6 @@ export default function LandingPage() {
                             </div>
                           )}
                         </button>
-                        
                         {activeDropdown === item.name && (
                           <div className="pl-4 mt-2 space-y-1 border-l-2 border-white/20">
                             {item.dropdown?.map(opt => (
@@ -1092,6 +1092,7 @@ export default function LandingPage() {
           animation: fadeInUp 0.8s ease-out forwards;
         }
       `}</style>
+      <GeminiChatbot />
     </div>
   );
 }
