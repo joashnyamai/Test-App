@@ -1068,7 +1068,7 @@ export default function LandingPage() {
               
               <div className="flex items-center gap-2 text-white/60">
                 <Shield className="w-5 h-5" />
-                <span className="font-medium">Enterprise-Grade Security</span>
+                <span className="font-medium">Kiwami TestCloud</span>
               </div>
             </div>
           </div>

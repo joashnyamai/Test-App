@@ -21,6 +21,7 @@ export const Signup = () => {
     fullName: "", 
     email: "", 
     password: "", 
+    confirmPassword: "",
     role: "", // Add role property
   });
 
@@ -54,6 +55,7 @@ export const Signup = () => {
       username: signupForm.email.split('@')[0],
       email: signupForm.email,
       password: signupForm.password,
+      confirmPassword: signupForm.confirmPassword || signupForm.password,
       role: signupForm.role || "QA Tester, Developer, Project Manager",   // Use selected role
     });
     
