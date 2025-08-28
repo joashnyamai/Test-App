@@ -1,46 +1,37 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HiEye, HiEyeOff, HiMail, HiKey, HiSparkles } from "react-icons/hi";
+import { HiEye, HiEyeOff, HiMail, HiKey } from "react-icons/hi";
+import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/user-store";
-import { motion } from "framer-motion";
 
 export const Login = () => {
   const navigate = useNavigate();
   const { login } = useUserStore();
-
-  const [form, setForm] = useState({ email: "", password: "" });
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [resetMode, setResetMode] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
-  const [resetMessage, setResetMessage] = useState("");
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
+  // Login form state
+  const [loginForm, setLoginForm] = useState({ 
+    email: "", 
+    password: "" 
+  });
 
   const handleLogin = async () => {
     setLoading(true);
     setError("");
 
-    if (!form.email || !form.password) {
+    if (!loginForm.email || !loginForm.password) {
       setError("Email and Password are required");
       setLoading(false);
       return;
     }
 
-    const success = login(form.email, form.password);
+    const success = login(loginForm.email, loginForm.password);
     if (success) {
       navigate("/dashboard", { replace: true });
     } else {
@@ -49,184 +40,126 @@ export const Login = () => {
     setLoading(false);
   };
 
-  const handleResetPassword = async () => {
-    if (!resetEmail) {
-      setResetMessage("Please enter your email");
-      return;
-    }
-    setResetMessage("If an account exists, a reset link has been sent to " + resetEmail);
-    setResetEmail("");
-    setResetMode(false);
+  const navigateToSignup = () => {
+    navigate("/signup");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--primary)_0%,_transparent_70%)] opacity-20 dark:opacity-10"></div>
-      <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob dark:bg-blue-800 dark:opacity-20"></div>
-      <div className="absolute top-40 right-20 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000 dark:bg-purple-800 dark:opacity-20"></div>
-      <div className="absolute bottom-20 left-40 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000 dark:bg-pink-800 dark:opacity-20"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-0">
+      <div className="w-full h-screen flex flex-col md:flex-row">
+        {/* Left side - Image - Full height and width on desktop */}
+        <div className="hidden md:flex md:w-1/2 h-full">
+          <img
+            src="https://media.istockphoto.com/id/1471444483/photo/customer-satisfaction-survey-concept-users-rate-service-experiences-on-online-application.jpg?b=1&s=612x612&w=0&k=20&c=2Wtg2ur5qT3ZFazgxIJYmkPD1ds8p_IVMmrABjZ4NOM="
+            alt="Smart farming illustration"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-md mx-4"
-      >
-        <Card className="border-0 shadow-2xl backdrop-blur-sm bg-white/95 dark:bg-gray-800/95 dark:border-gray-700">
-          <CardHeader className="text-center space-y-2 pb-6">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="mx-auto mb-4"
-            >
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <HiSparkles className="w-8 h-8 text-white" />
-              </div>
-            </motion.div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {resetMode ? "Reset Password" : "Welcome Back"}
-            </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-300">
-              {resetMode
-                ? "Enter your email to reset your password"
-                : "Sign in to your account to continue"}
-            </CardDescription>
-          </CardHeader>
+        {/* Right side - Form - Full height and width on desktop */}
+        <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-6 md:p-8">
+          <div className="w-full max-w-md">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle className="text-2xl font-bold text-center md:text-left">
+                Welcome Back
+              </CardTitle>
+              <CardDescription className="text-center md:text-left">
+                Sign in to your account to continue
+              </CardDescription>
+            </CardHeader>
 
-          <CardContent className="space-y-6">
-            {!resetMode ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="space-y-4"
-              >
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
-                  <div className="relative">
-                    <HiMail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="pl-10 pr-4 py-6 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Enter your email"
-                    />
-                  </div>
+            <CardContent className="px-0 pb-0 space-y-4">
+              {error && (
+                <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+                  {error}
                 </div>
+              )}
 
-                {/* Password */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</Label>
-                  <div className="relative">
-                    <HiKey className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      type={passwordVisible ? "text" : "password"}
-                      value={form.password}
-                      onChange={(e) => setForm({ ...form, password: e.target.value })}
-                      className="pl-10 pr-12 py-6 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Enter your password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setPasswordVisible(!passwordVisible)}
-                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                    >
-                      {passwordVisible ? <HiEyeOff className="h-5 w-5" /> : <HiEye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                </div>
-
-                {error && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 p-2 rounded-md"
-                  >
-                    {error}
-                  </motion.p>
-                )}
-
-                {/* Forgot password link */}
-                <p className="text-sm text-right">
-                  <button
-                    onClick={() => setResetMode(true)}
-                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-                  >
-                    Forgot password?
-                  </button>
-                </p>
-
-                {/* Sign In button */}
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    onClick={handleLogin}
-                    className="w-full py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        <span>Logging in...</span>
-                      </div>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </Button>
-                </motion.div>
-
-                {/* Sign Up link */}
-                <p className="text-center text-sm text-gray-600 dark:text-gray-300">
-                  Don’t have an account?{" "}
-                  <button
-                    onClick={() => navigate("/signup")}
-                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-                  >
-                    Sign up
-                  </button>
-                </p>
-              </motion.div>
-            ) : (
-              <div className="space-y-4">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
+              {/* Email */}
+              <div className="space-y-2">
+                <Label htmlFor="loginEmail">Email</Label>
                 <div className="relative">
                   <HiMail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
+                    id="loginEmail"
                     type="email"
-                    value={resetEmail}
-                    onChange={(e) => setResetEmail(e.target.value)}
-                    className="pl-10 pr-4 py-6 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    value={loginForm.email}
+                    onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                     placeholder="Enter your email"
+                    className="w-full pl-10"
                   />
                 </div>
+              </div>
 
-                {resetMessage && (
-                  <p className="text-sm text-green-600 dark:text-green-400">{resetMessage}</p>
-                )}
-
-                <div className="flex gap-2">
-                  <Button onClick={handleResetPassword} className="w-full bg-blue-600 text-white">
-                    Reset Password
-                  </Button>
-                  <Button variant="outline" onClick={() => setResetMode(false)} className="w-full">
-                    Cancel
-                  </Button>
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="loginPassword">Password</Label>
+                <div className="relative">
+                  <HiKey className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="loginPassword"
+                    type={passwordVisible ? "text" : "password"}
+                    value={loginForm.password}
+                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                    placeholder="Enter your password"
+                    className="w-full pl-10 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  >
+                    {passwordVisible ? <HiEyeOff size={18} /> : <HiEye size={18} />}
+                  </button>
                 </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
 
-      {/* Theme toggle */}
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="absolute top-4 right-4 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200"
-      >
-        {darkMode ? "🌙" : "☀️"}
-      </button>
+              {/* Forgot password */}
+              <div className="text-right">
+                <button className="text-sm text-green-600 hover:underline">
+                  Forgot password?
+                </button>
+              </div>
+
+              {/* Login button */}
+              <Button
+                onClick={handleLogin}
+                className="w-full bg-green-600 hover:bg-green-700"
+                disabled={loading}
+              >
+                {loading ? "Signing in..." : "Sign In"}
+              </Button>
+
+              {/* Divider */}
+              <div className="relative flex items-center py-4">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="flex-shrink mx-4 text-gray-500 text-sm">Or continue with</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+
+              {/* Google signin */}
+              <Button
+                variant="outline"
+                className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                <FaGoogle className="mr-2 text-blue-500" />
+                Continue with Google
+              </Button>
+
+              {/* Signup link */}
+              <p className="text-center text-sm text-gray-600 mt-6">
+                Don't have an account?{" "}
+                <button 
+                  onClick={navigateToSignup} 
+                  className="text-green-600 hover:underline font-medium"
+                >
+                  Sign up
+                </button>
+              </p>
+            </CardContent>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
