@@ -89,7 +89,7 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-foreground font-semibold text-sm">Kiwami Testcloud</span>
+              <span className="text-foreground font-semibold text-sm">Kiwami TestCloud</span>
               <span className="text-xs text-muted-foreground">QA Platform</span>
             </div>
           </div>
