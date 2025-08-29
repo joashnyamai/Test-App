@@ -65,7 +65,49 @@ export const Signup = () => {
       password: signupForm.password,
       role: signupForm.role || "QA Tester",
     });
+
+    console.log(`${signupForm.fullName} USername: ${signupForm.username} Email:${signupForm.email}
+    Password: ${signupForm.password}, 
+    ConfirmPassword: ${signupForm.confirmPassword},
+    role: ${signupForm.role}`)
     
+ 
+
+    //pushing data to api
+    console.log("pushing to api")
+    try {
+      const formData = {
+      name: signupForm.fullName, 
+      username: signupForm.username,
+      email: signupForm.email, 
+      password: signupForm.password, 
+      role: signupForm.role
+    }
+
+    console.log("now fetching")
+
+      const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console
+        throw new Error("Signup failed");
+        return;
+      }
+
+      const data = await response.json();
+      console.log(`Signup successful: ${data.message || "Welcome!"}`);
+    } catch (err) {
+      console.log(`Error: ${err.message}`);
+    }
+
+
+
     // Simulate API call
     setTimeout(() => {
       navigate("/login", { replace: true });

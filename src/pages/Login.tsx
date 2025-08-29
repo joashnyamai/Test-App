@@ -18,6 +18,7 @@ export const Login = () => {
   // Login form state
   const [loginForm, setLoginForm] = useState({ 
     email: "", 
+    username: "",
     password: "" 
   });
 
@@ -31,6 +32,45 @@ export const Login = () => {
       return;
     }
 
+        // username: loginForm.username || "" 
+
+    console.log("preparing");
+    console.log(`${loginForm.email}  ${loginForm.password}`)
+    //fetching from backend
+
+   console.log("pushing to login api")
+    try {
+      loginForm.email || !loginForm.password
+      const formData = {
+        email: loginForm.email, 
+        password: loginForm.password,
+      }
+
+      console.log("now fetching")
+
+      const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        setError("Invalid email or password");
+        setLoading(false);
+        throw new Error("Signup failed");
+      }
+
+      const data = await response.json();
+      console.log(`Signup successful: ${data.message || "Welcome!"}`);
+    } catch (err) {
+      console.log(`Error: ${err.message}`);
+      return;
+    }
+
+    //end of apis
+
     const success = login(loginForm.email, loginForm.password);
     if (success) {
       navigate("/dashboard", { replace: true });
@@ -39,7 +79,7 @@ export const Login = () => {
     }
     setLoading(false);
   };
-
+    
   const navigateToSignup = () => {
     navigate("/signup");
   };
