@@ -15,9 +15,13 @@ export interface User {
   bio?: string;
   company?: string;
   profileImage?: string;
+  avatar?: string;
   isEmailVerified?: boolean;
   isPhoneVerified?: boolean;
   lastActive?: Date;
+  _id?: string;
+  phoneVerifiedDate: Date;
+  emailVerifiedDate: Date;
 }
 
 interface UserStore {
@@ -45,6 +49,8 @@ export const useUserStore = create<UserStore>()(
           isEmailVerified: false,
           isPhoneVerified: false,
           lastActive: new Date(),
+          phoneVerifiedDate: new Date(),
+          emailVerifiedDate: new Date(),
         };
         
         set((state) => ({
@@ -70,11 +76,11 @@ export const useUserStore = create<UserStore>()(
           }
 
           // Helper function to normalize user data
-          const normalizeUserData = (userData: any): User => {
+          const normalizeUserData = (userData: Partial<User>): User => {
             return {
               id: userData.id || userData._id || Math.random().toString(36).substr(2, 9),
-              firstName: userData.firstName || userData.name?.split(' ')[0] || 'User',
-              lastName: userData.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
+              firstName: userData.firstName || 'User',
+              lastName: userData.lastName || '',
               username: userData.username || userData.email?.split('@')[0] || 'user',
               email: userData.email || '',
               password: userData.password || '',
@@ -84,10 +90,12 @@ export const useUserStore = create<UserStore>()(
               location: userData.location || '',
               bio: userData.bio || '',
               company: userData.company || '',
-              profileImage: userData.profileImage || userData.avatar || null,
+              profileImage: userData.profileImage || userData.avatar || '',
               isEmailVerified: userData.isEmailVerified || false,
               isPhoneVerified: userData.isPhoneVerified || false,
               lastActive: userData.lastActive ? new Date(userData.lastActive) : new Date(),
+              phoneVerifiedDate: userData.phoneVerifiedDate ? new Date(userData.phoneVerifiedDate) : new Date(),
+              emailVerifiedDate: userData.emailVerifiedDate ? new Date(userData.emailVerifiedDate) : new Date(),
             };
           };
 
@@ -171,27 +179,6 @@ export const useUserStore = create<UserStore>()(
         }
       },
       
-      // Helper method to normalize user data from backend responses
-      normalizeUserData: (userData: any): User => {
-        return {
-          id: userData.id || userData._id || Math.random().toString(36).substr(2, 9),
-          firstName: userData.firstName || userData.name?.split(' ')[0] || 'User',
-          lastName: userData.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
-          username: userData.username || userData.email?.split('@')[0] || 'user',
-          email: userData.email || '',
-          password: userData.password || '',
-          role: userData.role || 'QA Tester',
-          createdAt: userData.createdAt ? new Date(userData.createdAt) : new Date(),
-          phone: userData.phone || '',
-          location: userData.location || '',
-          bio: userData.bio || '',
-          company: userData.company || '',
-          profileImage: userData.profileImage || userData.avatar || null,
-          isEmailVerified: userData.isEmailVerified || false,
-          isPhoneVerified: userData.isPhoneVerified || false,
-          lastActive: userData.lastActive ? new Date(userData.lastActive) : new Date(),
-        };
-      },
     }),
     {
       name: 'user-storage',
