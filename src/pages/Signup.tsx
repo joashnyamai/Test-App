@@ -28,6 +28,7 @@ export const Signup = () => {
   const handleSignup = async () => {
     setLoading(true);
     setError("");
+    let success = false
     
     // Basic validation
     if (!signupForm.fullName || !signupForm.username || !signupForm.email || !signupForm.password || !signupForm.confirmPassword || !signupForm.role) {
@@ -74,36 +75,47 @@ export const Signup = () => {
       });
 
       if (!response.ok) {
+        success = false
         const errorData = await response.json();
-        setError(errorData.message || "Signup failed");
-        setLoading(false);
-        return;
+
+        //handle email verification error from backend... Omit the error for now
+        //TODO in backend: set email verification endpoint well
+        if(errorData.message.toLowerCase().includes("verification")) {
+          success = true;
+          setLoading(false);
+        }
+        else {
+          setError(errorData.message || "Signup failed");
+          setLoading(false);
+          return;
+        }
+      }
+      else {
+        success = true
+        const data = await response.json();
+        console.log(`Signup successful: ${data.message || "Welcome!"}`);
       }
 
-      const data = await response.json();
-      console.log(`Signup successful: ${data.message || "Welcome!"}`);
-
       // Add user to store on successful signup
-      addUser({
-        firstName: signupForm.fullName.split(" ")[0],
-        lastName: signupForm.fullName.split(" ").slice(1).join(" ") || "User",
-        username: signupForm.username,
-        email: signupForm.email,
-        password: signupForm.password,
-        role: signupForm.role || "QA Tester",
-      });
+      //removed lines
 
-      navigate("/login", { replace: true });
     } catch (err) {
       console.log(`Error: ${err.message}`);
       setError("An error occurred during signup");
     } finally {
       setLoading(false);
     }
+
+    console.log(`Success: ${success}`)
+    if(success) {
+      
+      navigateToLogin()
+    }
   };
 
+  
   const navigateToLogin = () => {
-    navigate("/login");
+    navigate("/login", {replace: true});
   };
 
   return (
