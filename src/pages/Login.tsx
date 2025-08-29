@@ -10,7 +10,7 @@ import { useUserStore } from "@/store/user-store";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const { login } = useUserStore();
+  // const { login } = useUserStore();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -42,7 +42,6 @@ export const Login = () => {
    console.log("pushing to login api")
 
     try {
-      loginForm.email || !loginForm.password
       const formData = {
         email: loginForm.email, 
         password: loginForm.password,
@@ -59,24 +58,27 @@ export const Login = () => {
       });
 
       if (!response.ok) {
-        setError("Invalid email or password");
-        setLoading(false);
-        throw new Error("Signup failed");
+        // setError("Invalid email or password");
+        success = false;
+        // throw new Error("Login failed");
       }
-
-      const data = await response.json();
-      console.log(`Signup successful: ${data.message || "Welcome!"}`);
-      success = true
+      else {
+        const data = await response.json();
+        console.log(`Login successful: ${data.message || "Welcome!"}`);
+        success = true
+      }
     } catch (err) {
       console.log(`Error: ${err.message}`);
       return;
     }
 
     //end of apis
-
+    console.log(`Success mode: ${success}`)
     // const success = login(loginForm.email, loginForm.password);
     if (success) {
-      navigate("/dashboard", { replace: true });
+      setLoading(false);
+      console.log("Navigating to dashboard");
+      navigate("/dashboard");
     } else {
       setError("Invalid email or password");
     }
