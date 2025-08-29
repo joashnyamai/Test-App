@@ -22,17 +22,7 @@ export const Signup = () => {
     email: "", 
     password: "", 
     confirmPassword: "",
-<<<<<<< HEAD
-    role: "", // Add role property
-  });
-
-  // Login form state
-  const [loginForm, setLoginForm] = useState({ 
-    email: "", 
-    password: "" 
-=======
     role: "", 
->>>>>>> 494866d244a3ef6b24c1bca3223467a972a9cb3c
   });
 
   const handleSignup = async () => {
@@ -52,38 +42,10 @@ export const Signup = () => {
       return;
     }
 
-<<<<<<< HEAD
-    // Add user to store
-    addUser({
-      firstName: signupForm.fullName.split(' ')[0],
-      lastName: signupForm.fullName.split(' ').slice(1).join(' ') || "User",
-      username: signupForm.email.split('@')[0],
-      email: signupForm.email,
-      password: signupForm.password,
-      confirmPassword: signupForm.confirmPassword || signupForm.password,
-      role: signupForm.role || "QA Tester, Developer, Project Manager",   // Use selected role
-    });
-    
-    
-    // Simulate API call
-    setTimeout(() => {
-      navigate("/dashboard", { replace: true });
-      setLoading(false);
-    }, 1000);
-  };
-
-  const handleLogin = async () => {
-    setLoading(true);
-    setError("");
-
-    if (!loginForm.email || !loginForm.password) {
-      setError("Email and Password are required");
-=======
     // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(signupForm.email)) {
       setError("Please enter a valid email address");
->>>>>>> 494866d244a3ef6b24c1bca3223467a972a9cb3c
       setLoading(false);
       return;
     }
