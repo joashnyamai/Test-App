@@ -16,7 +16,7 @@ interface UserStore {
   users: User[];
   currentUser: User | null;
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   getUserByEmail: (email: string) => User | undefined;
 }
@@ -39,15 +39,60 @@ export const useUserStore = create<UserStore>()(
         }));
       },
       
-      login: (email, password) => {
-        const user = get().users.find(u => u.email === email && u.password === password);
-        if (user) {
-          set({ currentUser: user });
-          localStorage.setItem('token', user.id);
-          return true;
-        }
+  login: async (email, password) => {
+    try {
+      const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error("Login failed:", data);
         return false;
-      },
+      }
+
+      // Extract token from various possible field names
+      const token = data.token || data.accessToken || data.access_token || data.data?.token;
+      
+      if (token) {
+        localStorage.setItem('token', token);
+        
+        // Store user data if available
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+          set({ currentUser: data.user });
+        }
+        
+        return true;
+      }
+      
+      // If no token but we have user data with _id, use _id as token
+      if (data.user && data.user._id) {
+        localStorage.setItem('token', data.user._id);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        set({ currentUser: data.user });
+        return true;
+      }
+      
+      // If no token but we have user data with id, use id as token
+      if (data.user && data.user.id) {
+        localStorage.setItem('token', data.user.id);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        set({ currentUser: data.user });
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
+    }
+  },
       
       logout: () => {
         set({ currentUser: null });
