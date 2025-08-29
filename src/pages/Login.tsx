@@ -26,6 +26,7 @@ export const Login = () => {
     setLoading(true);
     setError("");
 
+    let success = false
     if (!loginForm.email || !loginForm.password) {
       setError("Email and Password are required");
       setLoading(false);
@@ -39,6 +40,7 @@ export const Login = () => {
     //fetching from backend
 
    console.log("pushing to login api")
+
     try {
       loginForm.email || !loginForm.password
       const formData = {
@@ -64,6 +66,7 @@ export const Login = () => {
 
       const data = await response.json();
       console.log(`Signup successful: ${data.message || "Welcome!"}`);
+      success = true
     } catch (err) {
       console.log(`Error: ${err.message}`);
       return;
@@ -71,7 +74,7 @@ export const Login = () => {
 
     //end of apis
 
-    const success = login(loginForm.email, loginForm.password);
+    // const success = login(loginForm.email, loginForm.password);
     if (success) {
       navigate("/dashboard", { replace: true });
     } else {
