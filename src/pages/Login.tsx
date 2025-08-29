@@ -6,12 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { HiEye, HiEyeOff, HiMail, HiKey } from "react-icons/hi";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/store/user-store";
 
 export const Login = () => {
   const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const login = useUserStore((state) => state.login);
 
   // Login form state
   const [loginForm, setLoginForm] = useState({ 
@@ -31,60 +33,12 @@ export const Login = () => {
     }
 
     try {
-      const formData = {
-        email: loginForm.email, 
-        password: loginForm.password,
-      }
+      const success = await login(loginForm.email, loginForm.password);
 
-      const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        // Handle different error scenarios
-        const errorMessage = data.message || data.error || "Invalid email or password";
-        setError(errorMessage);
-        setLoading(false);
-        return;
-      }
-
-      console.log(`Login successful: ${data.message || "Welcome!"}`);
-      console.log("Backend response data:", data);
-      
-      // Store the token from backend response - check different possible token field names
-      const token = data.token || data.accessToken || data.access_token || data.data?.token;
-      
-      if (token) {
-        localStorage.setItem('token', token);
-        
-        // Also store user data if available
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
-        
-        // Redirect to dashboard
+      if (success) {
         navigate("/dashboard", { replace: true });
       } else {
-        // If no token but response is successful, check if we have user data with _id
-        if (data.user && data.user._id) {
-          // Use user _id as token for authentication
-          localStorage.setItem('token', data.user._id);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          navigate("/dashboard", { replace: true });
-        } else if (data.user && data.user.id) {
-          // Use user id as token for authentication
-          localStorage.setItem('token', data.user.id);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          navigate("/dashboard", { replace: true });
-        } else {
-          setError("Login successful but no authentication token received. Response: " + JSON.stringify(data));
-        }
+        setError("Invalid email or password");
       }
     } catch (err) {
       console.log(`Error: ${err.message}`);

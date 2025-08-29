@@ -205,20 +205,7 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         )}
       </div>
       
-      {/* User profile */}
-      {!collapsed && user && (
-        <div className="p-3 border-t border-border/30">
-          <div className="flex items-center space-x-2 p-2 rounded-lg bg-background/10">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user.role}</p>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };

@@ -1,19 +1,23 @@
-# Login Redirect Fix - Implementation Steps
+# Backend Logic Implementation for Navigation Bar Profile Button
 
-## Steps to Complete:
-1. [x] Fix Login.tsx handler to properly handle backend response and redirect
-2. [x] Update user store to work with backend authentication
-3. [ ] Test the login functionality and redirect
+## Phase 1: User Store Enhancements
+- [x] Update user-store.tsx to handle localStorage synchronization
+- [x] Add methods for profile updates and data consistency
 
-## Current Status:
-- Login page has enhanced backend response handling
-- User store now uses backend API for authentication instead of local storage
-- Both components work with the same backend endpoint
+## Phase 2: Navbar Integration
+- [x] Update Navbar.tsx to use user store instead of localStorage
+- [x] Ensure proper user data display in profile dropdown
 
-## Completed:
-- Enhanced login handler to better handle backend response formats
-- Added support for multiple token field names (token, accessToken, access_token, data.token)
-- Added user data storage in localStorage
-- Improved error handling with specific error messages from backend
-- Updated user store interface to support async login operations
-- Modified user store login method to use backend API
+## Phase 3: Profile Page Integration
+- [ ] Update Profile.tsx to use actual user store
+- [ ] Implement proper profile editing with store updates
+
+## Phase 4: Authentication Flow Updates
+- [ ] Update Login.tsx to properly update user store
+- [ ] Update Signup.tsx to ensure proper store initialization
+
+## Phase 5: Testing
+- [ ] Test authentication flow end-to-end
+- [ ] Verify user data persistence
+- [ ] Test profile editing functionality
+- [ ] Ensure proper logout behavior

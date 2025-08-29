@@ -56,35 +56,14 @@ export const Signup = () => {
       return;
     }
 
-    // Add user to store
-    addUser({
-      firstName: signupForm.fullName.split(' ')[0],
-      lastName: signupForm.fullName.split(' ').slice(1).join(' ') || "User",
-      username: signupForm.username,
-      email: signupForm.email,
-      password: signupForm.password,
-      role: signupForm.role || "QA Tester",
-    });
-
-    console.log(`${signupForm.fullName} USername: ${signupForm.username} Email:${signupForm.email}
-    Password: ${signupForm.password}, 
-    ConfirmPassword: ${signupForm.confirmPassword},
-    role: ${signupForm.role}`)
-    
- 
-
-    //pushing data to api
-    console.log("pushing to api")
     try {
       const formData = {
-      name: signupForm.fullName, 
-      username: signupForm.username,
-      email: signupForm.email, 
-      password: signupForm.password, 
-      role: signupForm.role
-    }
-
-    console.log("now fetching")
+        name: signupForm.fullName,
+        username: signupForm.username,
+        email: signupForm.email,
+        password: signupForm.password,
+        role: signupForm.role,
+      };
 
       const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/signup", {
         method: "POST",
@@ -94,25 +73,33 @@ export const Signup = () => {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        console.log("Signup failed");
-        throw new Error("Signup failed");
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Signup failed");
+        setLoading(false);
         return;
       }
 
       const data = await response.json();
       console.log(`Signup successful: ${data.message || "Welcome!"}`);
+
+      // Add user to store on successful signup
+      addUser({
+        firstName: signupForm.fullName.split(" ")[0],
+        lastName: signupForm.fullName.split(" ").slice(1).join(" ") || "User",
+        username: signupForm.username,
+        email: signupForm.email,
+        password: signupForm.password,
+        role: signupForm.role || "QA Tester",
+      });
+
+      navigate("/login", { replace: true });
     } catch (err) {
       console.log(`Error: ${err.message}`);
-    }
-
-
-
-    // Simulate API call
-    setTimeout(() => {
-      navigate("/login", { replace: true });
+      setError("An error occurred during signup");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const navigateToLogin = () => {
