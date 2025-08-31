@@ -238,19 +238,32 @@ export const Dashboard = () => {
         <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Test Case Status */}
           <Card>
-            <CardHeader><CardTitle>Test Case Status</CardTitle></CardHeader>
-            <CardContent>
-              <PieChart width={250} height={200}>
-                <Pie data={project.testCaseStatusData} dataKey="value" outerRadius={80} label>
-                  {project.testCaseStatusData.map((entry, index) => (
-                    <Cell key={index} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={tooltipStyle} />
-              </PieChart>
-            </CardContent>
-          </Card>
-
+  <CardHeader><CardTitle>Test Case Status</CardTitle></CardHeader>
+  <CardContent className="flex flex-col items-center">
+    <div className="relative">
+      <PieChart width={250} height={200}>
+        <Pie data={project.testCaseStatusData} dataKey="value" outerRadius={80} label>
+          {project.testCaseStatusData.map((entry, index) => (
+            <Cell key={index} fill={entry.color} />
+          ))}
+        </Pie>
+        <Tooltip contentStyle={tooltipStyle} />
+      </PieChart>
+    </div>
+    {/* Legend/Key */}
+    <div className="mt-4 flex flex-wrap justify-center gap-3">
+      {project.testCaseStatusData.map((entry, index) => (
+        <div key={index} className="flex items-center">
+          <div 
+            className="w-3 h-3 mr-2 rounded-sm" 
+            style={{ backgroundColor: entry.color }}>
+            </div>
+          <span className="text-sm">{entry.name}</span>
+        </div>
+      ))}
+    </div>
+    </CardContent>
+    </Card>
           {/* Bug Severity */}
           <Card>
             <CardHeader><CardTitle>Bug Severity Distribution</CardTitle></CardHeader>
