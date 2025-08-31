@@ -186,13 +186,10 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
         {!collapsed ? (
           <button 
             onClick={handleLogout}
-            className="flex items-center w-full rounded-lg px-3 py-2.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors duration-200 group"
+            className="flex items-center w-full rounded-lg px-3 py-2.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors duration-200"
           >
             <LogOut className="w-4 h-4" />
             <span className="text-sm ml-3">Logout</span>
-            <span className="ml-auto text-xs text-muted-foreground/70 group-hover:text-foreground/70">
-              {user?.name.split(' ')[0]}
-            </span>
           </button>
         ) : (
           <button 
@@ -204,8 +201,6 @@ export const Sidebar = ({ collapsed, onToggle }: SidebarProps) => {
           </button>
         )}
       </div>
-      
-      
     </div>
   );
 };

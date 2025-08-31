@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Edit, Download, Upload } from "lucide-react";
+import { Trash2, Edit, Download, Upload, Plus } from "lucide-react";
 
 interface RTMEntry {
   requirementId: string;
@@ -31,6 +31,7 @@ const RtmPage = () => {
     remarks: ""
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   const handleAddEntry = () => {
     if (editingIndex !== null) {
@@ -44,7 +45,7 @@ const RtmPage = () => {
       setEntries([...entries, form]);
     }
     
-    // Reset form
+    // Reset form and hide it
     setForm({
       requirementId: "",
       mainFeature: "",
@@ -54,11 +55,13 @@ const RtmPage = () => {
       testStatus: "",
       remarks: ""
     });
+    setShowForm(false);
   };
 
   const handleEditEntry = (index: number) => {
     setForm(entries[index]);
     setEditingIndex(index);
+    setShowForm(true);
   };
 
   const handleDeleteEntry = (index: number) => {
@@ -75,7 +78,22 @@ const RtmPage = () => {
         testStatus: "",
         remarks: ""
       });
+      setShowForm(false);
     }
+  };
+
+  const handleCancel = () => {
+    setForm({
+      requirementId: "",
+      mainFeature: "",
+      subFeature: "",
+      description: "",
+      testCaseId: "",
+      testStatus: "",
+      remarks: ""
+    });
+    setEditingIndex(null);
+    setShowForm(false);
   };
 
   const handleExportToExcel = () => {
@@ -147,127 +165,125 @@ const RtmPage = () => {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingIndex !== null ? "Edit Entry" : "Add New Entry"}</CardTitle>
-          <CardDescription>
-            {editingIndex !== null 
-              ? "Update the requirement traceability entry" 
-              : "Add a new requirement traceability entry"
-            }
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="requirementId">Requirement ID *</Label>
-              <Input
-                id="requirementId"
-                value={form.requirementId}
-                onChange={(e) => setForm({ ...form, requirementId: e.target.value })}
-                placeholder="REQ-001"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="mainFeature">Main Feature *</Label>
-              <Input
-                id="mainFeature"
-                value={form.mainFeature}
-                onChange={(e) => setForm({ ...form, mainFeature: e.target.value })}
-                placeholder="Authentication"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subFeature">Sub Feature</Label>
-              <Input
-                id="subFeature"
-                value={form.subFeature}
-                onChange={(e) => setForm({ ...form, subFeature: e.target.value })}
-                placeholder="Login Flow"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Requirement Description *</Label>
-              <Input
-                id="description"
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="User should be able to login with valid credentials"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="testCaseId">Test Case ID *</Label>
-              <Input
-                id="testCaseId"
-                value={form.testCaseId}
-                onChange={(e) => setForm({ ...form, testCaseId: e.target.value })}
-                placeholder="TC-001"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="testStatus">Test Status *</Label>
-              <Select
-                value={form.testStatus}
-                onValueChange={(value) => setForm({ ...form, testStatus: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Not Started">Not Started</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Blocked">Blocked</SelectItem>
-                  <SelectItem value="Failed">Failed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2 md:col-span-2 lg:col-span-3">
-              <Label htmlFor="remarks">Remarks</Label>
-              <Input
-                id="remarks"
-                value={form.remarks}
-                onChange={(e) => setForm({ ...form, remarks: e.target.value })}
-                placeholder="Additional notes or comments"
-              />
-            </div>
-          </div>
-
-          <Button 
-            onClick={handleAddEntry} 
-            disabled={!form.requirementId || !form.mainFeature || !form.description || !form.testCaseId || !form.testStatus}
-          >
-            {editingIndex !== null ? "Update Entry" : "Add Entry"}
+      {!showForm ? (
+        <div className="flex justify-center">
+          <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Add New Entry
           </Button>
+        </div>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>{editingIndex !== null ? "Edit Entry" : "Add New Entry"}</CardTitle>
+            <CardDescription>
+              {editingIndex !== null 
+                ? "Update the requirement traceability entry" 
+                : "Add a new requirement traceability entry"
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="requirementId">Requirement ID *</Label>
+                <Input
+                  id="requirementId"
+                  value={form.requirementId}
+                  onChange={(e) => setForm({ ...form, requirementId: e.target.value })}
+                  placeholder="REQ-001"
+                  required
+                />
+              </div>
 
-          {editingIndex !== null && (
-            <Button variant="outline" onClick={() => {
-              setEditingIndex(null);
-              setForm({
-                requirementId: "",
-                mainFeature: "",
-                subFeature: "",
-                description: "",
-                testCaseId: "",
-                testStatus: "",
-                remarks: ""
-              });
-            }} className="ml-2">
-              Cancel Edit
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="mainFeature">Main Feature *</Label>
+                <Input
+                  id="mainFeature"
+                  value={form.mainFeature}
+                  onChange={(e) => setForm({ ...form, mainFeature: e.target.value })}
+                  placeholder="Authentication"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="subFeature">Sub Feature</Label>
+                <Input
+                  id="subFeature"
+                  value={form.subFeature}
+                  onChange={(e) => setForm({ ...form, subFeature: e.target.value })}
+                  placeholder="Login Flow"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Requirement Description *</Label>
+                <Input
+                  id="description"
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  placeholder="User should be able to login with valid credentials"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="testCaseId">Test Case ID *</Label>
+                <Input
+                  id="testCaseId"
+                  value={form.testCaseId}
+                  onChange={(e) => setForm({ ...form, testCaseId: e.target.value })}
+                  placeholder="TC-001"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="testStatus">Test Status *</Label>
+                <Select
+                  value={form.testStatus}
+                  onValueChange={(value) => setForm({ ...form, testStatus: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Not Started">Not Started</SelectItem>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="Blocked">Blocked</SelectItem>
+                    <SelectItem value="Failed">Failed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2 md:col-span-2 lg:col-span-3">
+                <Label htmlFor="remarks">Remarks</Label>
+                <Input
+                  id="remarks"
+                  value={form.remarks}
+                  onChange={(e) => setForm({ ...form, remarks: e.target.value })}
+                  placeholder="Additional notes or comments"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleAddEntry} 
+                disabled={!form.requirementId || !form.mainFeature || !form.description || !form.testCaseId || !form.testStatus}
+              >
+                {editingIndex !== null ? "Update Entry" : "Add Entry"}
+              </Button>
+
+              <Button variant="outline" onClick={handleCancel}>
+                Cancel
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -294,7 +310,7 @@ const RtmPage = () => {
               {entries.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                    No entries found. Add your first requirement traceability entry above.
+                    No entries found. Add your first requirement traceability entry by clicking the "Add New Entry" button.
                   </TableCell>
                 </TableRow>
               ) : (
