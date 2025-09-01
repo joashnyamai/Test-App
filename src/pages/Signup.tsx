@@ -66,7 +66,8 @@ export const Signup = () => {
         role: signupForm.role,
       };
 
-      const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/signup", {
+      const backend_url = process.env.REACT_APP_BACKEND_URL
+      const response = await fetch(`${backend_url}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

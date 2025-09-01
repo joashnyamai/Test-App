@@ -26,6 +26,8 @@ export const Login = () => {
     setLoading(true);
     setError("");
 
+    let success = false
+
     if (!loginForm.email || !loginForm.password) {
       setError("Email and Password are required");
       setLoading(false);
@@ -33,7 +35,34 @@ export const Login = () => {
     }
 
     try {
-      const success = await login(loginForm.email, loginForm.password);
+      const formData = {
+        email: loginForm.email,
+        password: loginForm.password
+      }
+
+      const backend_url = process.env.REACT_APP_BACKEND_URL
+      const response = await fetch(`${backend_url}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        success = false
+        const errorData = await response.json();
+        setLoading(false);
+      }
+      else {
+        success = true
+        const data = await response.json();
+        console.log(`Login successful: ${data.message || "Welcome!"}`);
+        setLoading(false);
+      }
+
+      // Add user to store on successful signup
+      //removed lines
 
       if (success) {
         navigate("/dashboard", { replace: true });
