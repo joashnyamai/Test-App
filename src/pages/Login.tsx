@@ -52,6 +52,10 @@ export const Login = () => {
     navigate("/signup");
   };
 
+  function handleForgotPassword() {
+    navigate("/forgot-password");
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-0">
       <div className="w-full h-screen flex flex-col md:flex-row">
@@ -124,7 +128,7 @@ export const Login = () => {
 
               {/* Forgot password */}
               <div className="text-right">
-                <button className="text-sm text-green-600 hover:underline">
+                <button className="text-sm text-green-600 hover:underline" onClick={handleForgotPassword}>
                   Forgot password?
                 </button>
               </div>

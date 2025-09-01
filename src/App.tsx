@@ -21,6 +21,7 @@ import RtmPage from "./pages/RtmPage";
 import Reports from "./pages/Reports";
 import { Notifications } from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import { ForgotPassword } from "./pages/ForgotPassword";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,8 @@ const App = () => (
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* Protected Routes */}
           <Route
