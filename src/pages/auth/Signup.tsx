@@ -7,6 +7,7 @@ import { HiEye, HiEyeOff } from "react-icons/hi";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/user-store";
+import { backend_url } from "@/config";
 
 export const Signup = () => {
   const navigate = useNavigate();
@@ -57,6 +58,8 @@ export const Signup = () => {
       return;
     }
 
+    
+
     try {
       const formData = {
         name: signupForm.fullName,
@@ -66,7 +69,6 @@ export const Signup = () => {
         role: signupForm.role,
       };
 
-      const backend_url = process.env.REACT_APP_BACKEND_URL
       const response = await fetch(`${backend_url}/auth/signup`, {
         method: "POST",
         headers: {
@@ -79,21 +81,23 @@ export const Signup = () => {
         success = false
         const errorData = await response.json();
 
-        //handle email verification error from backend... Omit the error for now
-        //TODO in backend: set email verification endpoint well
-        if(errorData.message.toLowerCase().includes("verification")) {
-          success = true;
-          setLoading(false);
-        }
-        else {
+        // //handle email verification error from backend... Omit the error for now
+        // //TODO in backend: set email verification endpoint well
+        // if(errorData.message.toLowerCase().includes("verification")) {
+        //   success = true;
+        //   setLoading(false);
+        // }
+        // else {
           setError(errorData.message || "Signup failed");
           setLoading(false);
           return;
-        }
+        // }
       }
       else {
         success = true
         const data = await response.json();
+
+        addUser(data);
         console.log(`Signup successful: ${data.message || "Welcome!"}`);
       }
 
@@ -109,15 +113,18 @@ export const Signup = () => {
 
     console.log(`Success: ${success}`)
     if(success) {
-      
-      navigateToLogin()
+      verifyEmail()
+      // navigateToLogin()
     }
   };
 
-  
+  const verifyEmail = () => {
+    navigate("/verify-email", {replace: true});
+  }
   const navigateToLogin = () => {
     navigate("/login", {replace: true});
   };
+  console.log(backend_url)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-0">

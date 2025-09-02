@@ -9,19 +9,21 @@ import LandingPage from "./pages/LandingPage";
 import { TestCases } from "./pages/TestCases";
 import { BugReports } from "./pages/BugReports";
 import { BugBash } from "./pages/BugBash";
-import { Login } from "./pages/Login";
+import { Login } from "./pages/auth/Login";
 import Projects from "./pages/Projects"; // Import the Projects component
 import QaReport from "./pages/QaReport"; // Import the QaReport component
 import { TestPlans } from "./pages/TestPlans"; // Import the TestPlans component
 import { TestSuites } from "./pages/TestSuites"; // Import the TestSuites component
-import { Signup } from "./pages/Signup";
+import { Signup } from "./pages/auth/Signup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import RtmPage from "./pages/RtmPage";
 import Reports from "./pages/Reports";
 import { Notifications } from "./pages/Notifications";
 import Settings from "./pages/Settings";
-import { ForgotPassword } from "./pages/ForgotPassword";
+import { ForgotPassword } from "./pages/auth/ForgotPassword";
+import { EmailVerification } from "./pages/auth/EmailVerification";
+import { ResetPassword } from "./pages/auth/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +47,8 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-email" element={<EmailVerification />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Protected Routes */}
           <Route

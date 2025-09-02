@@ -40,7 +40,7 @@ export const Login = () => {
         password: loginForm.password
       }
 
-      const backend_url = process.env.REACT_APP_BACKEND_URL
+      const backend_url = process.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backend_url}/auth/login`, {
         method: "POST",
         headers: {
