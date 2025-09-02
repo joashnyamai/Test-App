@@ -7,6 +7,7 @@ import { HiEye, HiEyeOff, HiMail, HiKey } from "react-icons/hi";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/user-store";
+import { backend_url } from "@/config";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -40,7 +41,6 @@ export const Login = () => {
         password: loginForm.password
       }
 
-      const backend_url = process.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backend_url}/auth/login`, {
         method: "POST",
         headers: {
@@ -52,6 +52,7 @@ export const Login = () => {
       if (!response.ok) {
         success = false
         const errorData = await response.json();
+        console.log(errorData);
         setLoading(false);
       }
       else {

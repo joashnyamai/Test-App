@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { backend_url } from '@/config';
 
 export interface User {
   id: string;
@@ -24,15 +25,45 @@ export interface User {
   emailVerifiedDate: Date;
 }
 
+// Temporary user data for signup flow
+export interface TempUserData {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
+  role: string;
+  signupTimestamp: Date;
+}
+
 interface UserStore {
   users: User[];
   currentUser: User | null;
+  tempUserData: TempUserData | null; // Store temp signup data
+  
+  // Basic CRUD Operations
   addUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
+  updateUser: (id: string, updates: Partial<User>) => void;
+  deleteUser: (id: string) => void;
+  getUserById: (id: string) => User | undefined;
+  getUserByEmail: (email: string) => User | undefined;
+  getAllUsers: () => User[];
+  
+  // Authentication Operations
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  getUserByEmail: (email: string) => User | undefined;
   updateCurrentUser: (updates: Partial<User>) => void;
   syncUserFromLocalStorage: () => void;
+  
+  // Signup Flow Operations
+  setTempUserData: (userData: TempUserData) => void;
+  getTempUserData: () => TempUserData | null;
+  clearTempUserData: () => void;
+  getTempUserEmail: () => string | null;
+  
+  // User Management
+  verifyUserEmail: (email: string) => void;
+  verifyUserPhone: (email: string) => void;
+  updateUserLastActive: (email: string) => void;
 }
 
 export const useUserStore = create<UserStore>()(
@@ -40,7 +71,11 @@ export const useUserStore = create<UserStore>()(
     (set, get) => ({
       users: [],
       currentUser: null,
+      tempUserData: null,
       
+      // ========== CRUD Operations ==========
+      
+      // CREATE - Add a new user
       addUser: (userData) => {
         const newUser: User = {
           ...userData,
@@ -56,11 +91,131 @@ export const useUserStore = create<UserStore>()(
         set((state) => ({
           users: [...state.users, newUser],
         }));
+        
+        return newUser;
       },
+      
+      // READ - Get user by ID
+      getUserById: (id: string) => {
+        return get().users.find(user => user.id === id || user._id === id);
+      },
+      
+      // READ - Get user by email
+      getUserByEmail: (email: string) => {
+        return get().users.find(user => user.email === email);
+      },
+      
+      // READ - Get all users
+      getAllUsers: () => {
+        return get().users;
+      },
+      
+      // UPDATE - Update user by ID
+      updateUser: (id: string, updates: Partial<User>) => {
+        set((state) => ({
+          users: state.users.map(user => 
+            (user.id === id || user._id === id) 
+              ? { ...user, ...updates, lastActive: new Date() }
+              : user
+          )
+        }));
+        
+        // If updating current user, update currentUser as well
+        const currentUser = get().currentUser;
+        if (currentUser && (currentUser.id === id || currentUser._id === id)) {
+          set((state) => ({
+            currentUser: { ...state.currentUser!, ...updates, lastActive: new Date() }
+          }));
+        }
+      },
+      
+      // DELETE - Remove user by ID
+      deleteUser: (id: string) => {
+        set((state) => ({
+          users: state.users.filter(user => user.id !== id && user._id !== id)
+        }));
+        
+        // If deleting current user, logout
+        const currentUser = get().currentUser;
+        if (currentUser && (currentUser.id === id || currentUser._id === id)) {
+          get().logout();
+        }
+      },
+      
+      // ========== Signup Flow Operations ==========
+      
+      // Store temporary signup data
+      setTempUserData: (userData: TempUserData) => {
+        set({ tempUserData: userData });
+      },
+      
+      // Get temporary signup data
+      getTempUserData: () => {
+        return get().tempUserData;
+      },
+      
+      // Get email from temp data (for email verification)
+      getTempUserEmail: () => {
+        const tempData = get().tempUserData;
+        return tempData ? tempData.email : null;
+      },
+      
+      // Clear temporary data after successful verification
+      clearTempUserData: () => {
+        set({ tempUserData: null });
+      },
+      
+      // ========== User Management Operations ==========
+      
+      // Mark user's email as verified
+      verifyUserEmail: (email: string) => {
+        set((state) => ({
+          users: state.users.map(user => 
+            user.email === email 
+              ? { ...user, isEmailVerified: true, emailVerifiedDate: new Date() }
+              : user
+          )
+        }));
+        
+        // Update current user if it's the same email
+        if (get().currentUser?.email === email) {
+          set((state) => ({
+            currentUser: { 
+              ...state.currentUser!, 
+              isEmailVerified: true, 
+              emailVerifiedDate: new Date() 
+            }
+          }));
+        }
+      },
+      
+      // Mark user's phone as verified
+      verifyUserPhone: (email: string) => {
+        set((state) => ({
+          users: state.users.map(user => 
+            user.email === email 
+              ? { ...user, isPhoneVerified: true, phoneVerifiedDate: new Date() }
+              : user
+          )
+        }));
+      },
+      
+      // Update user's last active time
+      updateUserLastActive: (email: string) => {
+        set((state) => ({
+          users: state.users.map(user => 
+            user.email === email 
+              ? { ...user, lastActive: new Date() }
+              : user
+          )
+        }));
+      },
+      
+      // ========== Authentication Operations ==========
       
       login: async (email, password) => {
         try {
-          const response = await fetch("https://qa-backend-q2ae.onrender.com/api/auth/login", {
+          const response = await fetch(`${backend_url}/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -110,26 +265,16 @@ export const useUserStore = create<UserStore>()(
               const userData = normalizeUserData(data.user);
               localStorage.setItem('user', JSON.stringify(userData));
               set({ currentUser: userData });
+              
+              // Update user in store if exists, otherwise add
+              const existingUser = get().getUserByEmail(userData.email);
+              if (existingUser) {
+                get().updateUser(existingUser.id, userData);
+              } else {
+                get().addUser(userData);
+              }
             }
             
-            return true;
-          }
-          
-          // If no token but we have user data with _id, use _id as token
-          if (data.user && data.user._id) {
-            localStorage.setItem('token', data.user._id);
-            const userData = normalizeUserData(data.user);
-            localStorage.setItem('user', JSON.stringify(userData));
-            set({ currentUser: userData });
-            return true;
-          }
-          
-          // If no token but we have user data with id, use id as token
-          if (data.user && data.user.id) {
-            localStorage.setItem('token', data.user.id);
-            const userData = normalizeUserData(data.user);
-            localStorage.setItem('user', JSON.stringify(userData));
-            set({ currentUser: userData });
             return true;
           }
           
@@ -146,10 +291,6 @@ export const useUserStore = create<UserStore>()(
         localStorage.removeItem('user');
       },
       
-      getUserByEmail: (email) => {
-        return get().users.find(u => u.email === email);
-      },
-      
       updateCurrentUser: (updates: Partial<User>) => {
         set((state) => {
           if (!state.currentUser) return state;
@@ -162,6 +303,12 @@ export const useUserStore = create<UserStore>()(
           
           // Update localStorage to keep it in sync
           localStorage.setItem('user', JSON.stringify(updatedUser));
+          
+          // Update in users array as well
+          const userId = state.currentUser.id || state.currentUser._id;
+          if (userId) {
+            get().updateUser(userId, updates);
+          }
           
           return { currentUser: updatedUser };
         });
@@ -182,6 +329,11 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: 'user-storage',
+      // Only persist users and currentUser, not tempUserData
+      partialize: (state) => ({ 
+        users: state.users, 
+        currentUser: state.currentUser 
+      }),
     }
   )
 );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,9 +9,33 @@ import { backend_url } from "@/config";
 
 export const EmailVerification = () => {
   const navigate = useNavigate();
+  const { 
+    getTempUserData, 
+    getTempUserEmail, 
+    clearTempUserData, 
+    addUser, 
+    verifyUserEmail,
+    getUserByEmail 
+  } = useUserStore();
+  
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+
+  // Get the email from temp user data when component mounts
+  useEffect(() => {
+    const email = getTempUserEmail();
+    if (email) {
+      setUserEmail(email);
+    } else {
+      // No temp data found, redirect to signup
+      setError("No signup data found. Please sign up again.");
+      setTimeout(() => {
+        navigate("/signup", { replace: true });
+      }, 2000);
+    }
+  }, [getTempUserEmail, navigate]);
 
   const handleCodeChange = (index, value) => {
     if (value.length > 1) return;
@@ -42,6 +66,11 @@ export const EmailVerification = () => {
       return;
     }
 
+    if (!userEmail) {
+      setError("Email not found. Please try signing up again.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -52,8 +81,8 @@ export const EmailVerification = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-            email: "",
-            code: verificationCode 
+          email: userEmail,
+          code: verificationCode 
         }),
       });
 
@@ -67,8 +96,45 @@ export const EmailVerification = () => {
       const data = await response.json();
       console.log(`Email verified successfully: ${data.message || "Email verified!"}`);
       
-      // Navigate to login or dashboard after successful verification
-      navigate("/login", { replace: true });
+      // Get temp user data and create the user in store
+      const tempUserData = getTempUserData();
+      if (tempUserData) {
+        // Split full name into first and last name
+        const nameParts = tempUserData.fullName.trim().split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        // Create user object for the store
+        const newUser = {
+          firstName,
+          lastName,
+          username: tempUserData.username,
+          email: tempUserData.email,
+          password: tempUserData.password,
+          role: tempUserData.role,
+          isEmailVerified: true, // Mark as verified
+          isPhoneVerified: false,
+          lastActive: new Date(),
+          phoneVerifiedDate: new Date(),
+          emailVerifiedDate: new Date(),
+        };
+        
+        // Add user to store
+        addUser(newUser);
+        
+        // Mark user as email verified (in case user already exists)
+        verifyUserEmail(userEmail);
+        
+        // Clear temporary data
+        clearTempUserData();
+        
+        // Navigate to login
+        navigate("/login", { replace: true });
+      } else {
+        // If no temp data, just mark existing user as verified
+        verifyUserEmail(userEmail);
+        navigate("/login", { replace: true });
+      }
       
     } catch (err) {
       console.log(`Error: ${err.message}`);
@@ -79,28 +145,46 @@ export const EmailVerification = () => {
   };
 
   const handleBackToLogin = () => {
+    // Clear temp data and go to login
+    clearTempUserData();
     navigate("/login");
   };
 
+  const handleBackToSignup = () => {
+    // Clear temp data and go to signup
+    clearTempUserData();
+    navigate("/signup");
+  };
+
   const handleResendCode = async () => {
+    if (!userEmail) {
+      setError("Email not found. Please try signing up again.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     
     try {
-      const backend_url = process.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backend_url}/auth/resend-verification`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ email: userEmail }),
       });
 
       if (response.ok) {
-        // Show success message or toast
+        // Show success message
         console.log("Verification code resent successfully");
+        // You might want to show a success toast here
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to resend verification code");
       }
     } catch (err) {
       console.log(`Error resending code: ${err.message}`);
+      setError("An error occurred while resending the code");
     } finally {
       setLoading(false);
     }
@@ -126,7 +210,11 @@ export const EmailVerification = () => {
                 Verify Your Email
               </CardTitle>
               <CardDescription className="text-center md:text-left">
-                Enter the 6-digit code sent to your email address.
+                {userEmail ? (
+                  <>Enter the 6-digit code sent to <span className="font-medium">{userEmail}</span></>
+                ) : (
+                  "Enter the 6-digit code sent to your email address."
+                )}
               </CardDescription>
             </CardHeader>
 
@@ -155,7 +243,7 @@ export const EmailVerification = () => {
               <Button
                 onClick={handleVerify}
                 className="w-full bg-green-600 hover:bg-green-700"
-                disabled={loading}
+                disabled={loading || !userEmail}
               >
                 {loading ? "Verifying..." : "Verify Email"}
               </Button>
@@ -164,20 +252,30 @@ export const EmailVerification = () => {
                 <button 
                   onClick={handleResendCode}
                   className="text-sm text-green-600 hover:underline"
-                  disabled={loading}
+                  disabled={loading || !userEmail}
                 >
                   Didn't receive the code? Resend
                 </button>
               </div>
 
-              <Button
-                onClick={handleBackToLogin}
-                variant="outline"
-                className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
-              >
-                <HiArrowLeft className="mr-2 h-4 w-4" />
-                Back to Login
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleBackToSignup}
+                  variant="outline"
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  <HiArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Signup
+                </Button>
+                
+                <Button
+                  onClick={handleBackToLogin}
+                  variant="outline"
+                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  Go to Login
+                </Button>
+              </div>
             </CardContent>
           </div>
         </div>

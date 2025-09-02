@@ -11,7 +11,7 @@ import { backend_url } from "@/config";
 
 export const Signup = () => {
   const navigate = useNavigate();
-  const { addUser } = useUserStore();
+  const { addUser, setTempUserData, clearTempUserData } = useUserStore();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -29,7 +29,7 @@ export const Signup = () => {
   const handleSignup = async () => {
     setLoading(true);
     setError("");
-    let success = false
+    let success = false;
     
     // Basic validation
     if (!signupForm.fullName || !signupForm.username || !signupForm.email || !signupForm.password || !signupForm.confirmPassword || !signupForm.role) {
@@ -58,9 +58,17 @@ export const Signup = () => {
       return;
     }
 
-    
-
     try {
+      // Store temporary user data for email verification
+      const tempUserData = {
+        fullName: signupForm.fullName,
+        username: signupForm.username,
+        email: signupForm.email,
+        password: signupForm.password,
+        role: signupForm.role,
+        signupTimestamp: new Date(),
+      };
+
       const formData = {
         name: signupForm.fullName,
         username: signupForm.username,
@@ -78,31 +86,20 @@ export const Signup = () => {
       });
 
       if (!response.ok) {
-        success = false
+        success = false;
         const errorData = await response.json();
-
-        // //handle email verification error from backend... Omit the error for now
-        // //TODO in backend: set email verification endpoint well
-        // if(errorData.message.toLowerCase().includes("verification")) {
-        //   success = true;
-        //   setLoading(false);
-        // }
-        // else {
-          setError(errorData.message || "Signup failed");
-          setLoading(false);
-          return;
-        // }
-      }
-      else {
-        success = true
+        setError(errorData.message || "Signup failed");
+        setLoading(false);
+        return;
+      } else {
+        success = true;
         const data = await response.json();
-
-        addUser(data);
+        
+        // Store temporary signup data in the store for email verification
+        setTempUserData(tempUserData);
+        
         console.log(`Signup successful: ${data.message || "Welcome!"}`);
       }
-
-      // Add user to store on successful signup
-      //removed lines
 
     } catch (err) {
       console.log(`Error: ${err.message}`);
@@ -111,20 +108,20 @@ export const Signup = () => {
       setLoading(false);
     }
 
-    console.log(`Success: ${success}`)
-    if(success) {
-      verifyEmail()
-      // navigateToLogin()
+    if (success) {
+      verifyEmail();
     }
   };
 
   const verifyEmail = () => {
-    navigate("/verify-email", {replace: true});
-  }
-  const navigateToLogin = () => {
-    navigate("/login", {replace: true});
+    navigate("/verify-email", { replace: true });
   };
-  console.log(backend_url)
+
+  const navigateToLogin = () => {
+    // Clear any temporary data when navigating away
+    clearTempUserData();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-white to-blue-50 p-0">
