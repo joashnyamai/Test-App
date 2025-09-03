@@ -73,7 +73,7 @@ export const Login = () => {
 
         {/* Right side - Form - Full height and width on desktop */}
         <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-6 md:p-8">
-          <div className="w-full max-w-md">
+          <Card className="w-full max-w-md border-0 shadow-none">
             <CardHeader className="px-0 pt-0">
               <CardTitle className="text-2xl font-bold text-center md:text-left">
                 Welcome Back
@@ -156,6 +156,10 @@ export const Login = () => {
               <Button
                 variant="outline"
                 className="w-full border-gray-300 text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  // You can implement Google OAuth here using backend_url
+                  window.location.href = `${backend_url}/auth/google`;
+                }}
               >
                 <FaGoogle className="mr-2 text-blue-500" />
                 Continue with Google
@@ -172,7 +176,7 @@ export const Login = () => {
                 </button>
               </p>
             </CardContent>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
