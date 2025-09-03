@@ -27,8 +27,6 @@ export const Login = () => {
     setLoading(true);
     setError("");
 
-    let success = false
-
     if (!loginForm.email || !loginForm.password) {
       setError("Email and Password are required");
       setLoading(false);
@@ -36,36 +34,11 @@ export const Login = () => {
     }
 
     try {
-      const formData = {
-        email: loginForm.email,
-        password: loginForm.password
-      }
-
-      const response = await fetch(`${backend_url}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        success = false
-        const errorData = await response.json();
-        console.log(errorData);
-        setLoading(false);
-      }
-      else {
-        success = true
-        const data = await response.json();
-        console.log(`Login successful: ${data.message || "Welcome!"}`);
-        setLoading(false);
-      }
-
-      // Add user to store on successful signup
-      //removed lines
-
+      // Use the store's login function which handles the API call and state management
+      const success = await login(loginForm.email, loginForm.password);
+      
       if (success) {
+        // Redirect to dashboard on successful login
         navigate("/dashboard", { replace: true });
       } else {
         setError("Invalid email or password");
